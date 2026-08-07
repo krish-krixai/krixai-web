@@ -1,0 +1,47 @@
+---
+title: 'Standalone Scan API'
+description: 'Scan text without proxying to an LLM'
+---
+
+Use this if you want to scan text without proxying to an LLM. Useful for scanning user inputs before your own processing logic, or for scanning outputs from models you call directly.
+
+```http
+POST https://api.krixaisecurity.com/v1/scan
+```
+
+### Request Headers
+
+| Header | Required | Description |
+|---|---|---|
+| `X-Krixai-Key` | Yes | Your Krixai API key: `kx-live-...` |
+| `Content-Type` | Yes | `application/json` |
+
+### Request Body
+
+```json
+{
+  "input": "Text to scan for threats...",
+  "checks": ["prompt_injection", "jailbreak", "pii"],
+  "sensitivity": "medium"
+}
+```
+
+### Response
+
+```json
+{
+  "request_id": "kx-req-def456",
+  "status": "flagged",
+  "scan_time_ms": 9,
+  "detections": [
+    {
+      "category": "pii",
+      "sub_type": "email_address",
+      "confidence": 1.0,
+      "matched_text": "john.doe@company.com",
+      "position": { "start": 45, "end": 67 }
+    }
+  ],
+  "sanitized_input": "Text to scan... contact [REDACTED] for details."
+}
+```

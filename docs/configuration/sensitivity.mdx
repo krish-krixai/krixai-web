@@ -1,0 +1,27 @@
+---
+title: 'Sensitivity Levels'
+description: 'Tuning the strictness of Krixai detection models'
+---
+
+### Sensitivity Levels
+
+Krixai allows you to adjust the sensitivity of its detection models to balance false positives and false negatives for your specific use case.
+
+| Level | Behavior | False Positive Rate | Use Case |
+|---|---|---|---|
+| `low` | Only catch high-confidence attacks (>95%) | Very low | High-traffic consumer apps where blocking legitimate users is costly |
+| `medium` (default) | Balanced detection (>85% confidence) | Low | Most applications |
+| `high` | Aggressive detection (>70% confidence) | Moderate | Regulated industries, sensitive data environments |
+| `paranoid` | Catch everything remotely suspicious | Higher | Internal tools, legal/compliance environments |
+
+### Overriding Sensitivity via Header
+
+You can configure the default sensitivity in your dashboard, or override it on a per-request basis:
+
+```bash
+# Set sensitivity per-request
+curl https://api.krixaisecurity.com/v1/chat/completions \
+  -H "X-Krixai-Key: kx-live-..." \
+  -H "X-Krixai-Sensitivity: high" \
+  ...
+```

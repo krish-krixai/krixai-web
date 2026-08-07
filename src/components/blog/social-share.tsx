@@ -7,7 +7,7 @@ export function SocialShare({ url, title }: { url: string; title: string }) {
   const [copied, setCopied] = useState(false);
 
   // Use dummy domain since we don't have the real one yet
-  const fullUrl = `https://krixai.com${url}`;
+  const fullUrl = `https://krixaisecurity.com${url}`;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(fullUrl);

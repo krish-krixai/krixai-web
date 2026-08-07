@@ -1,0 +1,47 @@
+---
+title: 'Detection Logs API'
+description: 'Retrieve past detections for audit and debugging'
+---
+
+Retrieve past detections for audit and debugging.
+
+```http
+GET https://api.krixaisecurity.com/v1/detections?limit=50&status=blocked
+```
+
+### Request Headers
+
+| Header | Required | Description |
+|---|---|---|
+| `X-Krixai-Key` | Yes | Your Krixai API key: `kx-live-...` |
+
+### Query Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `limit` | integer | No | Number of records to return (default 50, max 100) |
+| `status` | string | No | Filter by `blocked`, `flagged`, or `passed` |
+
+### Response
+
+```json
+{
+  "detections": [
+    {
+      "request_id": "kx-req-abc123",
+      "timestamp": "2026-08-07T10:30:00Z",
+      "category": "prompt_injection",
+      "sub_type": "instruction_override",
+      "confidence": 0.987,
+      "action": "blocked",
+      "scan_time_ms": 12,
+      "source_ip": "203.0.113.42"
+    }
+  ],
+  "pagination": {
+    "total": 142,
+    "limit": 50,
+    "offset": 0
+  }
+}
+```

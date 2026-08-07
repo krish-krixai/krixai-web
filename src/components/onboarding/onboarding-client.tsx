@@ -164,7 +164,7 @@ export function OnboardingClient() {
                 <div>
                   <label className="block text-[12px] font-bold text-neutral-300 mb-2">Workspace Slug</label>
                   <div className="flex items-center shadow-inner rounded-xl overflow-hidden focus-within:border-indigo-500 border border-white/[0.1] transition-colors">
-                    <span className="h-12 px-4 bg-white/[0.02] border-r border-white/[0.1] text-[13px] text-neutral-500 flex items-center select-none font-mono">krixai.com/</span>
+                    <span className="h-12 px-4 bg-white/[0.02] border-r border-white/[0.1] text-[13px] text-neutral-500 flex items-center select-none font-mono">krixaisecurity.com/</span>
                     <input type="text" placeholder="acme" className="flex-1 h-12 bg-[#111] px-4 text-[14px] text-white focus:outline-none" />
                   </div>
                 </div>

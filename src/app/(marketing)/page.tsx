@@ -13,9 +13,8 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return (
-    <main className="flex-1 w-full flex flex-col items-center bg-[#0A0E1A] overflow-hidden selection:bg-white/10 selection:text-white pb-0 mb-0">
+    <main className="flex-1 w-full flex flex-col items-center bg-[#000000] overflow-hidden selection:bg-[#8B5CF6]/20 selection:text-white pb-0 mb-0">
       <Hero />
-      <CodeSnippet />
       <FeatureCards />
       <HowItWorks />
       <Demo />

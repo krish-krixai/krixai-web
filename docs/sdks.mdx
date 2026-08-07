@@ -1,0 +1,49 @@
+---
+title: 'SDKs & Integrations'
+description: 'Using Krixai with LangChain, LlamaIndex, and FastAPI'
+---
+
+Because Krixai acts as a reverse proxy, it works natively with almost any LLM framework by simply changing the `base_url`.
+
+### LangChain Integration
+
+```python
+from langchain_openai import ChatOpenAI
+
+llm = ChatOpenAI(
+    model="gpt-4o",
+    api_key="sk-...",
+    base_url="https://api.krixaisecurity.com/v1",
+    default_headers={"X-Krixai-Key": "kx-live-..."}
+)
+
+# All LangChain chains now route through Krixai automatically
+response = llm.invoke("Summarize this legal document...")
+```
+
+### LlamaIndex Integration
+
+```python
+from llama_index.llms.openai import OpenAI
+
+llm = OpenAI(
+    model="gpt-4o",
+    api_key="sk-...",
+    api_base="https://api.krixaisecurity.com/v1",
+    default_headers={"X-Krixai-Key": "kx-live-..."}
+)
+```
+
+### FastAPI Middleware
+
+If you prefer to run Krixai as middleware on your own server rather than proxying outbound requests:
+
+```python
+from krixai import KrixaiMiddleware
+from fastapi import FastAPI
+
+app = FastAPI()
+app.add_middleware(KrixaiMiddleware, api_key="kx-live-...")
+
+# All requests to your AI endpoints are now automatically scanned
+```

@@ -1,0 +1,62 @@
+---
+title: 'Handling Blocked Requests'
+description: 'How to gracefully handle a 403 response in your application'
+---
+
+When Krixai blocks a request in **blocking mode**, it returns a `403 Forbidden` status code. Your application should catch this error and handle it gracefully rather than crashing.
+
+### Python Example (OpenAI SDK)
+
+```python
+from openai import OpenAI, APIStatusError
+
+client = OpenAI(
+    api_key="sk-...",
+    base_url="https://api.krixaisecurity.com/v1",
+    default_headers={"X-Krixai-Key": "kx-live-..."}
+)
+
+try:
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[{"role": "user", "content": user_input}]
+    )
+    return response.choices[0].message.content
+
+except APIStatusError as e:
+    if e.status_code == 403:
+        # Krixai blocked the request
+        detection = e.body.get("error", {}).get("detection", {})
+        print(f"Blocked: {detection.get('category')} "
+              f"(confidence: {detection.get('confidence')})")
+        
+        # Show user a safe message
+        return "Sorry, I couldn't process that request. Please rephrase."
+    
+    # Handle other API errors
+    raise
+```
+
+### Node.js Example (OpenAI SDK)
+
+```javascript
+try {
+  const response = await client.chat.completions.create({
+    model: 'gpt-4o',
+    messages: [{ role: 'user', content: userInput }]
+  });
+  return response.choices[0].message.content;
+
+} catch (error) {
+  if (error.status === 403) {
+    const detection = error.error?.detection;
+    console.log(`Blocked: ${detection?.category} (${detection?.confidence})`);
+    
+    // Show user a safe message
+    return "Sorry, I couldn't process that request. Please rephrase.";
+  }
+  
+  // Handle other API errors
+  throw error;
+}
+```

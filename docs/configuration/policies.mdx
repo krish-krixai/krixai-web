@@ -1,0 +1,26 @@
+---
+title: 'Policies & Modes'
+description: 'Controlling how Krixai handles detected threats'
+---
+
+### Detection Modes
+
+Krixai operates in one of three modes, which determines what happens when a threat is detected.
+
+| Mode | Behavior | When to Use |
+|---|---|---|
+| **Shadow** | Scan everything, log detections, but **never block**. Requests always pass through. | First week of integration. See what Krixai catches without any risk. |
+| **Advisory** | Scan and add detection results as response headers. Don't block. Let your app decide. | When you want your application logic to handle the decision. |
+| **Blocking** | Scan and **actively block** detected threats. Return error response to the client. | Production. Once you've validated false positive rates in Shadow mode. |
+
+### Overriding Mode via Header
+
+You can set your default mode in the dashboard, but you can also override it per-request using the `X-Krixai-Mode` header:
+
+```bash
+# Override mode per-request
+curl https://api.krixaisecurity.com/v1/chat/completions \
+  -H "X-Krixai-Key: kx-live-..." \
+  -H "X-Krixai-Mode: shadow" \
+  ...
+```

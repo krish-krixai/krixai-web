@@ -1,0 +1,35 @@
+---
+title: 'Custom Rules'
+description: 'Defining your own detection rules'
+---
+
+Define your own detection rules using keywords, regex patterns, or semantic similarity.
+
+### Configuration
+
+Custom rules are configured in your Krixai dashboard or via the API.
+
+```json
+{
+  "custom_rules": [
+    {
+      "name": "internal_project_names",
+      "type": "keyword_list",
+      "action": "redact",
+      "keywords": ["Project Phoenix", "Codename Atlas", "Q4 Launch"]
+    },
+    {
+      "name": "competitor_mentions",
+      "type": "regex",
+      "action": "flag",
+      "pattern": "(lakera|rebuff|prompt\\s*guard)"
+    }
+  ]
+}
+```
+
+### Rule Types
+
+- **`keyword_list`**: Exact string matching against a list of terms. Very fast.
+- **`regex`**: Regular expression matching for complex patterns.
+- **`semantic`**: Vector similarity matching to catch paraphrased concepts (requires Enterprise plan).

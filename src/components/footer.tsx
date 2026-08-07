@@ -20,7 +20,7 @@ export function Footer() {
           <Link href="/docs" className="text-[#71717A] text-[14px] hover:text-[#FFFFFF] transition-colors">Docs</Link>
           <Link href="/pricing" className="text-[#71717A] text-[14px] hover:text-[#FFFFFF] transition-colors">Pricing</Link>
           <Link href="/blog" className="text-[#71717A] text-[14px] hover:text-[#FFFFFF] transition-colors">Blog</Link>
-          <a href="mailto:hello@krixai.com" className="text-[#71717A] text-[14px] hover:text-[#FFFFFF] transition-colors">hello@krixai.com</a>
+          <a href="mailto:hello@krixaisecurity.com" className="text-[#71717A] text-[14px] hover:text-[#FFFFFF] transition-colors">hello@krixaisecurity.com</a>
         </div>
 
         {/* Right: Copyright & Socials */}

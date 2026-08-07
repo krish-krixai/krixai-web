@@ -1,0 +1,57 @@
+---
+title: 'Proxy Mode API'
+description: 'Drop-in proxy for your LLM provider'
+---
+
+Use Krixai as a drop-in proxy for your LLM provider. Same request format as OpenAI — just change the base URL.
+
+```http
+POST https://api.krixaisecurity.com/v1/chat/completions
+```
+
+### Request Headers
+
+| Header | Required | Description |
+|---|---|---|
+| `Authorization` | Yes | Your LLM provider API key: `Bearer sk-...` |
+| `X-Krixai-Key` | Yes | Your Krixai API key: `kx-live-...` |
+| `X-Krixai-Mode` | No | `shadow`, `advisory`, or `blocking` (default from dashboard settings) |
+| `X-Krixai-Sensitivity` | No | `low`, `medium`, `high`, or `paranoid` (default: `medium`) |
+| `Content-Type` | Yes | `application/json` |
+
+### Request Body
+
+Identical to OpenAI's chat completions API. Krixai passes it through after scanning.
+
+### Response (Allowed)
+
+Identical to OpenAI's response, with added headers:
+
+```http
+X-Krixai-Request-Id: kx-req-abc123
+X-Krixai-Scan-Time-Ms: 14
+X-Krixai-Input-Status: pass
+X-Krixai-Output-Status: pass
+```
+
+### Response (Blocked)
+
+If you are using `blocking` mode and a threat is detected, Krixai returns a `403 Forbidden` with a JSON payload detailing the detection.
+
+```json
+{
+  "error": {
+    "type": "request_blocked",
+    "code": "prompt_injection_detected",
+    "message": "Krixai blocked this request.",
+    "detection": {
+      "category": "prompt_injection",
+      "sub_type": "instruction_override",
+      "confidence": 0.987,
+      "scan_time_ms": 12,
+      "request_id": "kx-req-abc123",
+      "policy": "auto"
+    }
+  }
+}
+```

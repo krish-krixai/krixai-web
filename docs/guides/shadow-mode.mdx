@@ -1,0 +1,28 @@
+---
+title: 'Shadow Mode'
+description: 'Monitor your traffic without blocking requests'
+---
+
+Shadow mode is the recommended way to start using Krixai. It allows you to scan all incoming traffic, log detections, and evaluate false positive rates **without ever dropping a request**.
+
+### How it works
+
+When a request is sent to Krixai in Shadow Mode:
+1. Krixai scans the request for threats.
+2. If a threat is found, it is logged to your dashboard as `flagged`.
+3. **The request is passed through to the LLM regardless of the detection.**
+
+### Enabling Shadow Mode
+
+You can enable Shadow Mode globally in your dashboard, or override it on a per-request basis using the `X-Krixai-Mode` header.
+
+```bash
+curl https://api.krixaisecurity.com/v1/chat/completions \
+  -H "X-Krixai-Mode: shadow"
+```
+
+### When to switch to Blocking Mode
+
+We recommend staying in Shadow Mode for 3-7 days after deploying Krixai to production. 
+
+Review your dashboard to see what is being flagged. If you notice a high rate of false positives on legitimate user queries, consider adjusting your [Sensitivity Levels](/configuration/sensitivity) before switching to Blocking mode.

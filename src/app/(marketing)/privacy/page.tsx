@@ -58,7 +58,7 @@ export default function PrivacyPolicyPage() {
           <section>
             <h2 className="text-xl font-semibold text-white mb-4">5. Contact Us</h2>
             <p>
-              If you have any questions about this privacy policy or our privacy practices, please contact us at support@krixai.com.
+              If you have any questions about this privacy policy or our privacy practices, please contact us at support@krixaisecurity.com.
             </p>
           </section>
         </div>

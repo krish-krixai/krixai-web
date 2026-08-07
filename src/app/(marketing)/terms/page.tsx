@@ -56,7 +56,7 @@ export default function TermsOfServicePage() {
           <section>
             <h2 className="text-xl font-semibold text-white mb-4">6. Contact Us</h2>
             <p>
-              If you have any questions about these Terms, please contact us at support@krixai.com.
+              If you have any questions about these Terms, please contact us at support@krixaisecurity.com.
             </p>
           </section>
         </div>

@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import { Toaster } from "@/components/ui/toaster";
 
-const inter = Inter({
-  variable: "--font-inter",
+const geistSans = Geist({
+  variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
-const jetbrainsMono = JetBrains_Mono({
-  variable: "--font-jetbrains-mono",
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
@@ -20,11 +20,11 @@ export const metadata: Metadata = {
     default: "krixai - Enterprise AI Security Layer",
   },
   description: "krixai protects your AI applications against prompt injection, sensitive data leakage, and adversarial attacks before requests ever reach your models.",
-  metadataBase: new URL("https://krixai.com"),
+  metadataBase: new URL("https://krixaisecurity.com"),
   openGraph: {
     title: "krixai - Enterprise AI Security Layer",
     description: "Protect your AI applications against prompt injection and sensitive data leakage.",
-    url: "https://krixai.com",
+    url: "https://krixaisecurity.com",
     siteName: "krixai",
     type: "website",
   },
@@ -43,7 +43,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased dark bg-[#0A0E1A] text-white`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark bg-[#0A0E1A] text-white`}
     >
       <body className="min-h-full flex flex-col font-sans">
         {children}

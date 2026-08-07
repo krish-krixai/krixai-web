@@ -36,7 +36,7 @@ const METHODS: { name: SDK, desc: string, time: string, disabled?: boolean }[] =
 
 const ERRORS = [
   { title: "Invalid API Key", content: "Ensure you are using a valid krixai API key. Test your key in the dashboard settings before deploying." },
-  { title: "Connection Timeout", content: "Check if your network allows outbound connections to api.krixai.com over port 443." },
+  { title: "Connection Timeout", content: "Check if your network allows outbound connections to api.krixaisecurity.com over port 443." },
   { title: "Provider Not Configured", content: "Ensure you have routed your AI provider traffic through krixai properly using our base URL." },
   { title: "Rate Limit Exceeded", content: "You have exceeded your plan limits. Upgrade your tier in the Billing settings." },
 ];
@@ -82,7 +82,7 @@ export function IntegrationsSetupClient() {
     if (sdk === "TypeScript") {
       return `import { krixai } from 'krixai';\nimport OpenAI from 'openai';\n\n// 1. Initialize krixai Client\nconst krixaiClient = new krixai('${apiKey === "krix_••••••••••••••••" ? "YOUR_KRIXAI_KEY" : apiKey}');\n\n// 2. Wrap your provider\nconst client = krixaiClient.wrap(new OpenAI());\n\n// 3. Securely scan & route prompt\nconst response = await client.chat.completions.create({\n    model: 'gpt-4',\n    messages: [{ role: 'user', content: 'Hello!' }]\n});\n\nconsole.log(response.choices[0].message);`;
     }
-    return `curl -X POST https://api.krixai.com/v1/scan \\\n  -H "Authorization: Bearer ${apiKey === "krix_••••••••••••••••" ? "YOUR_KRIXAI_KEY" : apiKey}" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "provider": "${provider.toLowerCase()}",\n    "prompt": "Hello!",\n    "route_if_safe": true\n  }'`;
+    return `curl -X POST https://api.krixaisecurity.com/v1/scan \\\n  -H "Authorization: Bearer ${apiKey === "krix_••••••••••••••••" ? "YOUR_KRIXAI_KEY" : apiKey}" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "provider": "${provider.toLowerCase()}",\n    "prompt": "Hello!",\n    "route_if_safe": true\n  }'`;
   };
 
   if (isComplete) {
@@ -237,7 +237,7 @@ export function IntegrationsSetupClient() {
                     <div className="col-span-2">
                       <p className="text-[11px] font-bold text-neutral-500 uppercase tracking-widest mb-1.5">API Endpoint</p>
                       <div className="h-10 bg-[#111] border border-white/[0.05] rounded-xl flex items-center px-4 text-[13px] text-white font-mono shadow-inner">
-                        https://api.krixai.com/v1
+                        https://api.krixaisecurity.com/v1
                       </div>
                     </div>
                   </div>

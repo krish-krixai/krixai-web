@@ -1,0 +1,32 @@
+---
+title: 'Authentication'
+description: 'Securing your requests to Krixai'
+---
+
+Krixai uses API keys to authenticate your requests. You'll need two keys:
+
+| Key | Header | Purpose |
+|---|---|---|
+| **Your LLM API key** | `Authorization: Bearer sk-...` | Passed through to your LLM provider (OpenAI, Anthropic, etc). Krixai never stores this. |
+| **Your Krixai key** | `X-Krixai-Key: kx-...` | Authenticates you with Krixai. Get it from your dashboard. |
+
+### Key Types
+
+| Key Prefix | Environment | Usage |
+|---|---|---|
+| `kx-test-` | Sandbox | For development. Detections are logged but never block. |
+| `kx-live-` | Production | Real detection. Can block based on your policy. |
+
+### Security Guarantees
+
+<CardGroup cols={1}>
+  <Card title="No Key Storage" icon="key">
+    Your LLM API key is passed through in-memory and **never stored or logged** by Krixai.
+  </Card>
+  <Card title="Instant Rotation" icon="rotate">
+    Krixai API keys can be rotated instantly from the dashboard.
+  </Card>
+  <Card title="In-Transit Encryption" icon="lock">
+    All traffic is encrypted via TLS 1.3.
+  </Card>
+</CardGroup>

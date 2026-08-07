@@ -62,7 +62,7 @@ if (response.isSafe) {
 } else {
   console.log(\`Blocked: \${response.threatType}\`);
 }`,
-  curl: `curl -X POST https://api.krixai.com/v1/secure \\
+  curl: `curl -X POST https://api.krixaisecurity.com/v1/secure \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{

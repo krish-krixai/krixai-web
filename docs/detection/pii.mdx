@@ -1,0 +1,26 @@
+---
+title: 'PII & Sensitive Data'
+description: 'Detecting and redacting sensitive data'
+---
+
+Krixai scans for personally identifiable information (PII) and sensitive data patterns in both inputs and outputs.
+
+### Supported Entity Types
+
+| Entity | Pattern | Direction |
+|---|---|---|
+| Email addresses | `user@example.com` | Input + Output |
+| Phone numbers | `+1-555-123-4567` | Input + Output |
+| SSN | `123-45-6789` | Input + Output |
+| Credit card numbers | `4111-1111-1111-1111` | Input + Output |
+| API keys / secrets | `sk-`, `ghp_`, `AKIA` prefixes | Input + Output |
+| IP addresses | `192.168.1.1` | Output only (configurable) |
+| Custom patterns | Your own regex rules | Configurable |
+
+### Configurable Actions
+
+When PII is detected, you can configure Krixai to perform one of the following actions:
+
+- **`block`**: Reject the request entirely (returns a 403).
+- **`redact`**: Replace the sensitive data with `[REDACTED]` or `[EMAIL]` before passing it to the LLM (or back to the user).
+- **`flag`**: Log the detection for auditing, but allow the request to pass through unmodified.
