@@ -46,46 +46,46 @@
     {
       "group": "Getting Started",
       "pages": [
-        "quickstart",
-        "authentication"
+        "docs/quickstart",
+        "docs/authentication"
       ]
     },
     {
       "group": "Detection",
       "pages": [
-        "detection/prompt-injection",
-        "detection/jailbreak",
-        "detection/pii",
-        "detection/custom-rules"
+        "docs/detection/prompt-injection",
+        "docs/detection/jailbreak",
+        "docs/detection/pii",
+        "docs/detection/custom-rules"
       ]
     },
     {
       "group": "Configuration",
       "pages": [
-        "configuration/policies",
-        "configuration/sensitivity"
+        "docs/configuration/policies",
+        "docs/configuration/sensitivity"
       ]
     },
     {
       "group": "API Reference",
       "pages": [
-        "api-reference/proxy",
-        "api-reference/scan",
-        "api-reference/detections"
+        "docs/api-reference/proxy",
+        "docs/api-reference/scan",
+        "docs/api-reference/detections"
       ]
     },
     {
       "group": "SDKs & Integrations",
       "pages": [
-        "sdks"
+        "docs/sdks"
       ]
     },
     {
       "group": "Guides",
       "pages": [
-        "guides/shadow-mode",
-        "guides/handling-blocks",
-        "error-codes"
+        "docs/guides/shadow-mode",
+        "docs/guides/handling-blocks",
+        "docs/error-codes"
       ]
     }
   ],
