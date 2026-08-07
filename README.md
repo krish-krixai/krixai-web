@@ -51,3 +51,4 @@ To enable payments securely, configure either Test mode or Live mode explicitly:
    - `RAZORPAY_LIVE_WEBHOOK_SECRET`: Note: This must be the *Webhook Secret* from the Razorpay Webhooks dashboard, NOT the API key secret.
 
 The application will fail to start if the keys do not match the selected mode.
+# krixai-web
