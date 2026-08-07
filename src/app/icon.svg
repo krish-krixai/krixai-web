@@ -1,0 +1,22 @@
+<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <mask id="cut-route1-logo">
+      <rect x="0" y="0" width="24" height="24" fill="white" />
+      <line x1="10" y1="-2" x2="10" y2="26" stroke="black" stroke-width="2.5" />
+    </mask>
+  </defs>
+  <style>
+    @media (prefers-color-scheme: dark) {
+      .stroke-main { stroke: #FFFFFF; }
+    }
+    @media (prefers-color-scheme: light) {
+      .stroke-main { stroke: #05070A; }
+    }
+  </style>
+  <g mask="url(#cut-route1-logo)" class="stroke-main" stroke-width="4.2" stroke-linecap="butt">
+    <line x1="5" y1="2" x2="5" y2="22" />
+    <line x1="5" y1="12" x2="19" y2="2" />
+    <line x1="5" y1="12" x2="19" y2="22" />
+  </g>
+  <line x1="10" y1="2" x2="10" y2="22" stroke="#3B82F6" stroke-width="1.5" />
+</svg>

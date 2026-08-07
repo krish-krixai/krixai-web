@@ -1,0 +1,61 @@
+import { createServerClient } from '@supabase/ssr'
+import { NextResponse, type NextRequest } from 'next/server'
+
+export async function updateSession(request: NextRequest) {
+  let supabaseResponse = NextResponse.next({
+    request,
+  })
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll()
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value, options }) => request.cookies.set(name, value))
+          supabaseResponse = NextResponse.next({
+            request,
+          })
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          )
+        },
+      },
+    }
+  )
+
+  // refreshing the auth token
+  let user = null;
+  try {
+    const { data } = await supabase.auth.getUser();
+    user = data.user;
+  } catch (error) {
+    // Suppress network errors from dummy/invalid supabase config during dev
+    user = null;
+  }
+
+  // Define protected routes
+  const isDashboardRoute = request.nextUrl.pathname.startsWith('/dashboard')
+  
+  if (isDashboardRoute && !user) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/auth/sign-in'
+    return NextResponse.redirect(url)
+  }
+
+  // Redirect signed-in users away from auth pages
+  const isAuthRoute = request.nextUrl.pathname.startsWith('/auth')
+  if (isAuthRoute && user) {
+    // allow logout endpoint to work if it exists, otherwise redirect to dashboard
+    if (!request.nextUrl.pathname.includes('/auth/sign-out')) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/dashboard'
+      return NextResponse.redirect(url)
+    }
+  }
+
+  return supabaseResponse
+}

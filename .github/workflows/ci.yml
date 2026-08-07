@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  nextjs:
+    name: Next.js Checks
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./krixai-web # assuming repo structure
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: './krixai web/package-lock.json'
+      - name: Install dependencies
+        working-directory: './krixai web'
+        run: npm ci
+      - name: Lint
+        working-directory: './krixai web'
+        run: npm run lint
+      - name: Test Sanity Checks
+        working-directory: './krixai web'
+        run: npm run test
+      - name: Typecheck
+        working-directory: './krixai web'
+        run: npx tsc --noEmit
+      - name: Build Check
+        working-directory: './krixai web'
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: "https://example.supabase.co"
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: "dummy"
+          KRIXAI_ENGINE_URL: "http://127.0.0.1:8000"
+      - name: Install Supabase CLI
+        run: npm install -g supabase
+      - name: Validate Migrations
+        working-directory: './krixai web'
+        run: supabase migration lint
+
+  fastapi:
+    name: FastAPI Checks
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: . # root if monorepo, or KRIXAI-V1
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        working-directory: '.'
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest httpx
+      - name: Run Tests
+        working-directory: '.'
+        run: pytest krixai/tests/
