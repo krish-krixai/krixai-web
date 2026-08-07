@@ -10,10 +10,7 @@
   "colors": {
     "primary": "#00D4FF",
     "light": "#3B82F6",
-    "dark": "#8B5CF6",
-    "background": {
-      "dark": "#0A0E1A"
-    }
+    "dark": "#8B5CF6"
   },
   "topbarLinks": [
     {
@@ -25,12 +22,6 @@
     "name": "Get API Key",
     "url": "https://krixaisecurity.com/auth/sign-up"
   },
-  "tabs": [
-    {
-      "name": "API Reference",
-      "url": "api-reference"
-    }
-  ],
   "anchors": [
     {
       "name": "Dashboard",
@@ -43,53 +34,60 @@
       "url": "https://krixaisecurity.com"
     }
   ],
-  "navigation": [
-    {
-      "group": "Getting Started",
-      "pages": [
-        "docs/quickstart",
-        "docs/authentication"
-      ]
-    },
-    {
-      "group": "Detection",
-      "pages": [
-        "docs/detection/prompt-injection",
-        "docs/detection/jailbreak",
-        "docs/detection/pii",
-        "docs/detection/custom-rules"
-      ]
-    },
-    {
-      "group": "Configuration",
-      "pages": [
-        "docs/configuration/policies",
-        "docs/configuration/sensitivity"
-      ]
-    },
-    {
-      "group": "API Reference",
-      "pages": [
-        "docs/api-reference/proxy",
-        "docs/api-reference/scan",
-        "docs/api-reference/detections"
-      ]
-    },
-    {
-      "group": "SDKs & Integrations",
-      "pages": [
-        "docs/sdks"
-      ]
-    },
-    {
-      "group": "Guides",
-      "pages": [
-        "docs/guides/shadow-mode",
-        "docs/guides/handling-blocks",
-        "docs/error-codes"
-      ]
-    }
-  ],
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Getting Started",
+            "pages": [
+              "docs/quickstart",
+              "docs/authentication"
+            ]
+          },
+          {
+            "group": "Detection",
+            "pages": [
+              "docs/detection/prompt-injection",
+              "docs/detection/jailbreak",
+              "docs/detection/pii",
+              "docs/detection/custom-rules"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "pages": [
+              "docs/configuration/policies",
+              "docs/configuration/sensitivity"
+            ]
+          },
+          {
+            "group": "API Reference",
+            "pages": [
+              "docs/api-reference/proxy",
+              "docs/api-reference/scan",
+              "docs/api-reference/detections"
+            ]
+          },
+          {
+            "group": "SDKs & Integrations",
+            "pages": [
+              "docs/sdks"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "docs/guides/shadow-mode",
+              "docs/guides/handling-blocks",
+              "docs/error-codes"
+            ]
+          }
+        ]
+      }
+    ]
+  },
   "footerSocials": {
     "github": "https://github.com/krish-krixai/krixai-detect",
     "x": "https://x.com/krixaisecurity"
