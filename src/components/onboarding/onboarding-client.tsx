@@ -11,73 +11,80 @@ export function OnboardingClient() {
   const [error, setError] = useState<string | null>(null);
   
   const handleCreateWorkspace = async () => {
-    setError(null);
-    setIsCreatingWorkspace(true);
-    const supabase = createClient();
-    
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      setIsCreatingWorkspace(false);
-      return;
-    }
-
-    // 1. Check if user already has a workspace
-    const { data: existingMember, error: fetchError } = await supabase
-      .from('workspace_members')
-      .select('workspace_id')
-      .eq('user_id', user.id)
-      .limit(1)
-      .maybeSingle();
-
-    if (fetchError && fetchError.code !== 'PGRST116') {
-      setError(`fetchError: ${fetchError.message}`);
-      setIsCreatingWorkspace(false);
-      return;
-    }
-
-    if (existingMember) {
-      document.cookie = `workspace_id=${existingMember.workspace_id}; path=/; max-age=31536000; SameSite=Lax`;
-      window.location.href = "/dashboard";
-      return;
-    }
-
-    // 2. Create new workspace
-    const finalWorkspaceName = user.user_metadata?.workspace_name || (user.user_metadata?.full_name ? `${user.user_metadata.full_name}'s Workspace` : "My Workspace");
-    const workspaceId = crypto.randomUUID();
-    const slug = `${finalWorkspaceName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${workspaceId.substring(0, 6)}`;
-    
-    const { error: wsError } = await supabase
-      .from('workspaces')
-      .insert({ id: workspaceId, name: finalWorkspaceName, slug, created_by: user.id });
-
-    if (wsError) {
-      console.error("wsError", wsError?.message, wsError?.details, wsError);
-      setError(`wsError: ${wsError.message}`);
-      setIsCreatingWorkspace(false);
-      return;
-    }
-
-    const { error: memberError } = await supabase
-      .from('workspace_members')
-      .insert({
-        workspace_id: workspaceId,
-        user_id: user.id,
-        role: 'OWNER',
-        status: 'ACTIVE'
-      });
+    try {
+      setError(null);
+      setIsCreatingWorkspace(true);
+      const supabase = createClient();
       
-    if (memberError) {
-      console.error("memberError", memberError?.message, memberError?.details, memberError);
-      setError(`memberError: ${memberError.message}`);
-      setIsCreatingWorkspace(false);
-      return;
-    }
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setError("Authentication Error: You are not logged in. If you just signed up, you may need to check your email to verify your account before continuing.");
+        setIsCreatingWorkspace(false);
+        return;
+      }
 
-    // eslint-disable-next-line react-hooks/immutability
-    document.cookie = `workspace_id=${workspaceId}; path=/; max-age=31536000; SameSite=Lax`;
-    
-    setIsCreatingWorkspace(false);
-    window.location.href = "/dashboard";
+      // 1. Check if user already has a workspace
+      const { data: existingMember, error: fetchError } = await supabase
+        .from('workspace_members')
+        .select('workspace_id')
+        .eq('user_id', user.id)
+        .limit(1)
+        .maybeSingle();
+
+      if (fetchError && fetchError.code !== 'PGRST116') {
+        setError(`fetchError: ${fetchError.message}`);
+        setIsCreatingWorkspace(false);
+        return;
+      }
+
+      if (existingMember) {
+        document.cookie = `workspace_id=${existingMember.workspace_id}; path=/; max-age=31536000; SameSite=Lax`;
+        window.location.href = "/dashboard";
+        return;
+      }
+
+      // 2. Create new workspace
+      const finalWorkspaceName = user.user_metadata?.workspace_name || (user.user_metadata?.full_name ? `${user.user_metadata.full_name}'s Workspace` : "My Workspace");
+      const workspaceId = crypto.randomUUID();
+      const slug = `${finalWorkspaceName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${workspaceId.substring(0, 6)}`;
+      
+      const { error: wsError } = await supabase
+        .from('workspaces')
+        .insert({ id: workspaceId, name: finalWorkspaceName, slug, created_by: user.id });
+
+      if (wsError) {
+        console.error("wsError", wsError?.message, wsError?.details, wsError);
+        setError(`wsError: ${wsError.message}`);
+        setIsCreatingWorkspace(false);
+        return;
+      }
+
+      const { error: memberError } = await supabase
+        .from('workspace_members')
+        .insert({
+          workspace_id: workspaceId,
+          user_id: user.id,
+          role: 'OWNER',
+          status: 'ACTIVE'
+        });
+        
+      if (memberError) {
+        console.error("memberError", memberError?.message, memberError?.details, memberError);
+        setError(`memberError: ${memberError.message}`);
+        setIsCreatingWorkspace(false);
+        return;
+      }
+
+      // eslint-disable-next-line react-hooks/immutability
+      document.cookie = `workspace_id=${workspaceId}; path=/; max-age=31536000; SameSite=Lax`;
+      
+      setIsCreatingWorkspace(false);
+      window.location.href = "/dashboard";
+    } catch (err: any) {
+      console.error(err);
+      setError(`Unexpected Error: ${err.message || String(err)}`);
+      setIsCreatingWorkspace(false);
+    }
   };
   
   return (
