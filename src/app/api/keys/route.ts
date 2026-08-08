@@ -2,9 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { resolveWorkspace } from "@/utils/workspace";
 import { z } from "zod";
 import { checkRateLimit } from "@/utils/rate-limit";
+import { createClient } from "@supabase/supabase-js";
+import crypto from "crypto";
 
-const ENGINE_URL = process.env.KRIXAI_ENGINE_URL || "http://localhost:8000";
-const ADMIN_TOKEN = process.env.ADMIN_API_TOKEN || "";
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export async function GET(req: NextRequest) {
   try {
@@ -24,20 +28,18 @@ export async function GET(req: NextRequest) {
     const rateLimitResponse = await checkRateLimit('keys', `keys:${workspaceId}:${userId}`);
     if (rateLimitResponse) return rateLimitResponse;
     
-    const res = await fetch(`${ENGINE_URL}/internal/api-keys/${workspaceId}`, {
-      headers: {
-        "X-Admin-Token": ADMIN_TOKEN,
-      },
-    });
+    const { data, error } = await supabaseAdmin
+      .from('api_keys')
+      .select('*')
+      .eq('workspace_id', workspaceId)
+      .order('created_at', { ascending: false });
 
-    if (!res.ok) {
-      const errorText = await res.text();
-      console.error(`Engine error: ${errorText}`);
-      throw new Error(`Engine Error`);
+    if (error) {
+      console.error(`Database error:`, error);
+      throw new Error(`Database Error`);
     }
 
-    const data = await res.json();
-    return NextResponse.json(data);
+    return NextResponse.json({ keys: data });
   } catch (error: any) {
     if (error.message.includes("Forbidden")) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -80,32 +82,29 @@ export async function POST(req: NextRequest) {
     
     const body = parseResult.data;
     
-    const res = await fetch(`${ENGINE_URL}/internal/api-keys`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Admin-Token": ADMIN_TOKEN,
-      },
-      body: JSON.stringify({
-        workspace_id: workspaceId,
-        name: body.name,
-        environment: body.environment,
-        scopes: body.scopes,
-        expires_at: body.expires_at
-      }),
-    });
+    const rawToken = crypto.randomBytes(24).toString('hex');
+    const prefix = body.environment === 'Production' ? 'kx-live-' : 'kx-test-';
+    const plaintextKey = prefix + rawToken;
+    const key_prefix = plaintextKey.substring(0, 12);
+    const key_hash = crypto.createHash('sha256').update(plaintextKey).digest('hex');
 
-    if (!res.ok) {
-      if (res.status === 429) {
-        return NextResponse.json({ error: "Rate limit exceeded" }, { status: 429 });
-      }
-      const errorText = await res.text();
-      console.error(`Engine error: ${errorText}`);
-      throw new Error(`Engine Error`);
+    const { data, error } = await supabaseAdmin.from('api_keys').insert({
+      workspace_id: workspaceId,
+      name: body.name,
+      environment: body.environment,
+      scopes: body.scopes,
+      expires_at: body.expires_at,
+      key_prefix,
+      key_hash,
+      status: 'Active'
+    }).select().single();
+
+    if (error) {
+      console.error(`Database error:`, error);
+      throw new Error(`Database Error`);
     }
 
-    const data = await res.json();
-    return NextResponse.json(data);
+    return NextResponse.json({ ...data, plaintext_key: plaintextKey });
   } catch (error: any) {
     if (error.message.includes("Forbidden")) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
