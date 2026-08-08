@@ -10,8 +10,8 @@ export function Footer() {
         
         {/* Left: Logo */}
         <div className="flex-1 flex justify-center md:justify-start">
-          <Link href="/" className="flex items-center group opacity-80 hover:opacity-100 transition-opacity">
-            <LogoLockup className="h-6 w-auto text-white" />
+          <Link href="/" className="hover:opacity-80 transition-opacity">
+            <LogoLockup className="h-8 w-auto text-white" />
           </Link>
         </div>
 

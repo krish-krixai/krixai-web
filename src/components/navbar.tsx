@@ -32,7 +32,7 @@ export function Navbar() {
         {/* Left: Logo */}
         <div className="flex items-center h-full">
           <Link href="/" className="hover:opacity-80 transition-opacity flex items-center h-full" onClick={() => setIsMobileMenuOpen(false)}>
-            <LogoLockup className="h-6 w-auto text-white" />
+            <LogoLockup className="h-8 w-auto text-white" />
           </Link>
         </div>
 
