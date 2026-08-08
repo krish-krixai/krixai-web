@@ -58,14 +58,15 @@ export function SignUpClient() {
     
     const supabase = createClient();
     
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           full_name: name,
           workspace_name: workspace,
-        }
+        },
+        emailRedirectTo: `${location.origin}/auth/callback`
       }
     });
 
@@ -73,7 +74,13 @@ export function SignUpClient() {
       setError(error.message);
       setIsLoading(false);
     } else {
-      router.push("/onboarding");
+      if (data.user && !data.session) {
+        // Email confirmation is required
+        router.push("/auth/verify-email");
+      } else {
+        // No email confirmation required
+        router.push("/onboarding");
+      }
       router.refresh();
     }
   };
