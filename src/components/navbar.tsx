@@ -5,9 +5,24 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { LogoLockup } from "@/components/logo";
+import { createClient } from "@/utils/supabase/client";
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsAuthenticated(!!session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAuthenticated(!!session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Prevent scrolling when mobile menu is open
   useEffect(() => {
@@ -51,18 +66,31 @@ export function Navbar() {
             </Link>
           ))}
           <div className="flex items-center space-x-6 ml-2">
-            <Link 
-              href="/auth/sign-in" 
-              className="text-[#A1A1AA] font-medium text-[15px] transition-colors duration-200 hover:text-[#FFFFFF]"
-            >
-              Sign In
-            </Link>
-            <Link 
-              href="/auth/sign-up" 
-              className="text-[14px] font-semibold bg-[#FFFFFF] text-[#000000] px-[20px] py-[8px] rounded-[10px] hover:brightness-110 transition-all shadow-[0_0_0_1px_rgba(255,255,255,0.05)] hover:shadow-[0_0_0_1px_rgba(255,255,255,0.05)]"
-            >
-              Get API Key
-            </Link>
+            {isAuthenticated === null ? (
+               <div className="w-24 h-9 animate-pulse bg-neutral-800 rounded-lg" />
+            ) : isAuthenticated ? (
+              <Link 
+                href="/dashboard" 
+                className="text-[14px] font-semibold bg-[#FFFFFF] text-[#000000] px-[20px] py-[8px] rounded-[10px] hover:brightness-110 transition-all shadow-[0_0_0_1px_rgba(255,255,255,0.05)] hover:shadow-[0_0_0_1px_rgba(255,255,255,0.05)]"
+              >
+                Go to Dashboard
+              </Link>
+            ) : (
+              <>
+                <Link 
+                  href="/auth/sign-in" 
+                  className="text-[#A1A1AA] font-medium text-[15px] transition-colors duration-200 hover:text-[#FFFFFF]"
+                >
+                  Sign In
+                </Link>
+                <Link 
+                  href="/auth/sign-up" 
+                  className="text-[14px] font-semibold bg-[#FFFFFF] text-[#000000] px-[20px] py-[8px] rounded-[10px] hover:brightness-110 transition-all shadow-[0_0_0_1px_rgba(255,255,255,0.05)] hover:shadow-[0_0_0_1px_rgba(255,255,255,0.05)]"
+                >
+                  Get API Key
+                </Link>
+              </>
+            )}
           </div>
         </div>
 
@@ -102,20 +130,34 @@ export function Navbar() {
             </div>
 
             <div className="mt-8 flex flex-col space-y-3">
-              <Link 
-                href="/auth/sign-in" 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full text-center text-[16px] font-medium text-[#FFFFFF] py-[14px] rounded-[10px] border border-[#27272A] hover:bg-[#27272A]/50 transition-all"
-              >
-                Sign In
-              </Link>
-              <Link 
-                href="/auth/sign-up" 
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="w-full text-center text-[16px] font-semibold bg-[#FFFFFF] text-[#000000] py-[14px] rounded-[10px] hover:brightness-110 transition-all shadow-[0_0_0_1px_rgba(255,255,255,0.05)]"
-              >
-                Get API Key
-              </Link>
+              {isAuthenticated === null ? (
+                <div className="w-full h-12 animate-pulse bg-neutral-800 rounded-xl" />
+              ) : isAuthenticated ? (
+                <Link 
+                  href="/dashboard" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="w-full text-center text-[16px] font-semibold bg-[#FFFFFF] text-[#000000] py-[14px] rounded-[10px] hover:brightness-110 transition-all shadow-[0_0_0_1px_rgba(255,255,255,0.05)]"
+                >
+                  Go to Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link 
+                    href="/auth/sign-in" 
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="w-full text-center text-[16px] font-medium text-[#FFFFFF] py-[14px] rounded-[10px] border border-[#27272A] hover:bg-[#27272A]/50 transition-all"
+                  >
+                    Sign In
+                  </Link>
+                  <Link 
+                    href="/auth/sign-up" 
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="w-full text-center text-[16px] font-semibold bg-[#FFFFFF] text-[#000000] py-[14px] rounded-[10px] hover:brightness-110 transition-all shadow-[0_0_0_1px_rgba(255,255,255,0.05)]"
+                  >
+                    Get API Key
+                  </Link>
+                </>
+              )}
             </div>
           </motion.div>
         )}
