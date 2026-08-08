@@ -1,7 +1,9 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useWorkspace } from "@/components/providers/workspace-provider";
+import { createClient } from "@/utils/supabase/client";
 import {
   LayoutDashboard,
   Shield,
@@ -25,6 +27,30 @@ function cn(...inputs: ClassValue[]) {
 
 export function Sidebar({ user }: { user?: { full_name: string; email: string } }) {
   const pathname = usePathname();
+  const { activeWorkspace } = useWorkspace();
+  const [subscription, setSubscription] = useState<any>(null);
+  const supabase = createClient();
+
+  useEffect(() => {
+    if (activeWorkspace) {
+      const fetchSub = async () => {
+        const { data } = await supabase
+          .from('workspace_subscriptions')
+          .select('*')
+          .eq('workspace_id', activeWorkspace.id)
+          .single();
+        if (data) {
+          setSubscription(data);
+        }
+      };
+      fetchSub();
+    }
+  }, [activeWorkspace]);
+
+  const monthlyLimit = subscription?.included_scans || 10000;
+  const used = subscription?.scans_used || 0;
+  const planName = subscription?.plan_id ? subscription.plan_id.replace('_', ' ') : "Free Plan";
+  const usagePercentage = Math.min(100, (used / monthlyLimit) * 100);
 
   const mainNav = [
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
@@ -103,14 +129,14 @@ export function Sidebar({ user }: { user?: { full_name: string; email: string } 
 
         {/* Usage Box */}
         <div className="px-3 pt-2">
-          <div className="text-[11px] text-neutral-500 font-semibold mb-2 uppercase">Free Plan</div>
+          <div className="text-[11px] text-neutral-500 font-semibold mb-2 uppercase">{planName}</div>
           <div className="flex items-center justify-between text-[12px] text-white mb-2">
-            <span>1,842 / 10,000 req</span>
+            <span>{used.toLocaleString()} / {monthlyLimit.toLocaleString()} req</span>
           </div>
           <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden mb-2">
-            <div className="bg-white h-full" style={{ width: "18%" }} />
+            <div className="bg-white h-full transition-all duration-500" style={{ width: `${usagePercentage}%` }} />
           </div>
-          <div className="text-[11px] text-neutral-500 text-right mb-4">18%</div>
+          <div className="text-[11px] text-neutral-500 text-right mb-4">{Math.round(usagePercentage)}%</div>
           
           <Link href="/dashboard/usage" className="flex items-center gap-1.5 text-[12px] text-white hover:text-neutral-300 transition-colors group">
             [Upgrade <ArrowRight className="w-3 h-3 inline group-hover:translate-x-1 transition-transform" />]
