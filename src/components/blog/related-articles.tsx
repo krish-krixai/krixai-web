@@ -39,7 +39,7 @@ export function RelatedArticles({ currentArticle }: { currentArticle: Article })
 
         {/* Engineering Docs CTA */}
         <Link
-          href="/docs"
+          href="https://docs.krixaisecurity.com"
           className="group flex flex-col p-6 bg-gradient-to-br from-[#111111] to-[#0A0A0A] border border-white/[0.04] rounded-xl hover:border-white/[0.1] transition-all duration-300"
         >
           <div className="flex items-center gap-2 mb-4">

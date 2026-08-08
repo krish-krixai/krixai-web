@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { LogoLockup } from "@/components/logo";
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -18,7 +19,8 @@ export function Navbar() {
   }, [isMobileMenuOpen]);
 
   const links = [
-    { href: "/docs", label: "Docs" },
+    { href: "https://docs.krixaisecurity.com", label: "Docs" },
+    { href: "/playground", label: "Playground" },
     { href: "/pricing", label: "Pricing" },
     { href: "/blog", label: "Blog" },
   ];
@@ -28,9 +30,9 @@ export function Navbar() {
       <div className="mx-auto flex h-full max-w-[1200px] items-center justify-between px-6">
         
         {/* Left: Logo */}
-        <div className="flex items-center">
-          <Link href="/" className="text-white font-bold text-[24px] tracking-tighter hover:opacity-80 transition-opacity" onClick={() => setIsMobileMenuOpen(false)}>
-            Krixai
+        <div className="flex items-center h-full">
+          <Link href="/" className="hover:opacity-80 transition-opacity flex items-center h-full" onClick={() => setIsMobileMenuOpen(false)}>
+            <LogoLockup className="h-6 w-auto text-white" />
           </Link>
         </div>
 

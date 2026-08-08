@@ -384,7 +384,7 @@ export function IntegrationsSetupClient() {
           <div className="bg-[#0a0a0a] border border-white/[0.08] rounded-2xl p-6">
             <h3 className="text-[14px] font-bold text-white mb-4">Quick Links</h3>
             <div className="space-y-3">
-              <a href="/docs" className="flex items-center justify-between text-[13px] text-neutral-400 hover:text-white transition-colors group">
+              <a href="https://docs.krixaisecurity.com" className="flex items-center justify-between text-[13px] text-neutral-400 hover:text-white transition-colors group">
                 <span className="flex items-center"><Book className="w-4 h-4 mr-2 opacity-70" /> API Reference</span>
                 <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
               </a>

@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Check, Loader2 } from "lucide-react";
+import { Check, Loader2, ArrowRight } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { CheckoutModal, BillingDetails } from "./checkout-modal";
+import Link from "next/link";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -12,84 +13,100 @@ function cn(...inputs: ClassValue[]) {
 
 const PRICING_PLANS = [
   {
-    name: "Starter",
-    description: "For early-stage AI products getting started with runtime security.",
-    priceUsd: "$49",
-    priceInr: "₹4,100",
-    amountUsd: 4900, // cents
-    amountInr: 410000, // paise
+    name: "Free",
+    priceDisplay: "$0",
     interval: "/month",
+    priceInrDisplay: "₹0",
+    tagline: "For developers evaluating Krixai",
+    description: "Get started with full prompt injection and jailbreak detection. No credit card required.",
+    belowPrice: "",
+    amountUsd: 0,
+    amountInr: 0,
     features: [
-      "50,000 prompt scans/month",
-      "All 8 attack categories",
-      "Real-time BLOCK / WARN / ALLOW decisions",
-      "Scan logs access",
-      "REST API access",
-      "Email support"
+      "10,000 requests /mo",
+      "All detection categories",
+      "Basic real-time dashboard",
+      "3-day log retention",
+      "1 environment & 1 seat",
+      "Community support"
     ],
-    cta: "Get Started",
+    cta: "Get Started Free",
+    ctaAction: "free",
+    style: "ghost",
+    highlighted: false,
+    comingSoon: false
+  },
+  {
+    name: "Starter",
+    priceDisplay: "$49",
+    interval: "/month",
+    priceInrDisplay: "₹4,100",
+    tagline: "For teams launching AI in production",
+    description: "Everything you need to go from shadow mode to full production blocking. Output scanning, auto-redaction, and 30-day audit logs included.",
+    belowPrice: "Includes 100k requests. Then $0.002/request.",
+    amountUsd: 4900,
+    amountInr: 410000,
+    features: [
+      "100,000 requests /mo",
+      "3 custom detection rules",
+      "Full real-time dashboard",
+      "30-day log retention",
+      "3 environments & 3 seats",
+      "48h email support"
+    ],
+    cta: "Start 14-Day Free Trial",
+    ctaAction: "checkout",
+    style: "ghost-cyan",
+    highlighted: false,
+    comingSoon: false
+  },
+  {
+    name: "Pro",
+    badge: "MOST POPULAR",
+    priceDisplay: "$199",
+    interval: "/month",
+    priceInrDisplay: "₹16,500",
+    tagline: "For teams scaling AI across products",
+    description: "Unlimited custom rules, webhook alerts, 90-day audit trail, and priority support. Built for DevSecOps teams that need full visibility and control.",
+    belowPrice: "Includes 1M requests. Then $0.001/request.",
+    amountUsd: 19900,
+    amountInr: 1650000,
+    features: [
+      "1,000,000 requests /mo",
+      "Unlimited custom rules",
+      "Analytics & custom dashboards",
+      "90-day log retention",
+      "10 environments & 10 seats",
+      "12h priority support"
+    ],
+    cta: "Start 14-Day Free Trial",
+    ctaAction: "checkout",
+    style: "primary-glow",
     highlighted: true,
     comingSoon: false
   },
   {
-    name: "Growth",
-    description: "For production applications scaling their AI product.",
-    priceUsd: "$199",
-    priceInr: "₹16,500",
-    amountUsd: 19900,
-    amountInr: 1650000,
-    interval: "/month",
-    features: [
-      "250,000 prompt scans/month",
-      "Everything in Starter",
-      "Threat analytics dashboard",
-      "Alert system (Email/Webhook)",
-      "API usage tracking",
-      "Team management (5 seats)",
-      "Priority email support"
-    ],
-    cta: "Get Started",
-    highlighted: false,
-    comingSoon: false
-  },
-  {
-    name: "Scale",
-    description: "For high-volume AI deployments requiring strict control.",
-    priceUsd: "$499",
-    priceInr: "₹41,500",
-    amountUsd: 49900,
-    amountInr: 4150000,
-    interval: "/month",
-    features: [
-      "700,000 prompt scans/month",
-      "Everything in Growth",
-      "Audit logs",
-      "Custom policy thresholds",
-      "Dedicated onboarding",
-      "SLA guarantee",
-      "Slack support channel"
-    ],
-    cta: "Coming Soon",
-    highlighted: false,
-    comingSoon: true
-  },
-  {
     name: "Enterprise",
-    description: "For custom deployments and advanced security requirements.",
-    priceUsd: "Custom",
-    priceInr: "Custom",
+    priceDisplay: "COMING SOON",
+    interval: "",
+    priceInrDisplay: "COMING SOON",
+    tagline: "",
+    description: "Everything in Pro, plus:",
+    belowPrice: "",
     amountUsd: 0,
     amountInr: 0,
-    interval: "",
     features: [
-      "Private / On-prem deployment",
-      "Multi-tenant architecture",
+      "Unlimited requests",
       "SSO / SAML",
-      "Custom contracts & MSA",
-      "SOC 2 reporting",
-      "Dedicated account manager"
+      "SLA guarantee",
+      "Dedicated support",
+      "Custom deployment",
+      "Annual contracts"
     ],
-    cta: "Coming Soon",
+    cta: "Join Waitlist",
+    ctaAction: "waitlist",
+    style: "ghost",
+    extraLine: "We're incorporating soon. Get notified.",
     highlighted: false,
     comingSoon: true
   }
@@ -101,20 +118,14 @@ interface PricingTableProps {
 }
 
 export function PricingTable({ isCheckoutEnabled = false, isTestMode = false }: PricingTableProps) {
-  const [isIndia, setIsIndia] = useState<boolean | null>(null);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<typeof PRICING_PLANS[0] | null>(null);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  
+  // Usage Calculator State
+  const [requests, setRequests] = useState(250000);
 
-  useEffect(() => {
-    try {
-      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      setIsIndia(tz === 'Asia/Kolkata' || tz === 'Asia/Calcutta');
-    } catch (e) {
-      setIsIndia(false);
-    }
-  }, []);
-
+  // Usage Calculator State
   const loadRazorpay = () => {
     return new Promise((resolve) => {
       const script = document.createElement("script");
@@ -126,9 +137,11 @@ export function PricingTable({ isCheckoutEnabled = false, isTestMode = false }: 
   };
 
   const handleCheckout = (plan: typeof PRICING_PLANS[0]) => {
-    if (plan.comingSoon) return;
-    setSelectedPlan(plan);
-    setIsCheckoutOpen(true);
+    if (plan.ctaAction === "checkout") {
+      if (plan.comingSoon) return;
+      setSelectedPlan(plan);
+      setIsCheckoutOpen(true);
+    }
   };
 
   const handlePaymentSubmit = async (details: BillingDetails) => {
@@ -144,7 +157,6 @@ export function PricingTable({ isCheckoutEnabled = false, isTestMode = false }: 
     }
 
     try {
-      // Create order on our backend
       const res = await fetch("/api/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -161,7 +173,7 @@ export function PricingTable({ isCheckoutEnabled = false, isTestMode = false }: 
         throw new Error(data.error || "Failed to create order");
       }
 
-      setIsCheckoutOpen(false); // Close modal on success
+      setIsCheckoutOpen(false);
 
       const options = {
         key: data.key_id,
@@ -172,7 +184,6 @@ export function PricingTable({ isCheckoutEnabled = false, isTestMode = false }: 
         order_id: data.order_id,
         handler: async function (response: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) {
           try {
-            // Verify payment
             const verifyRes = await fetch("/api/verify-payment", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -197,7 +208,7 @@ export function PricingTable({ isCheckoutEnabled = false, isTestMode = false }: 
           }
         },
         theme: {
-          color: "#6366f1"
+          color: "#8B5CF6"
         }
       };
 
@@ -218,6 +229,71 @@ export function PricingTable({ isCheckoutEnabled = false, isTestMode = false }: 
     }
   };
 
+  // Calculator Logic
+  const calcStarterOverage = Math.max(0, requests - 100000);
+  const calcStarterCost = 49 + (calcStarterOverage * 0.002);
+  const calcProOverage = Math.max(0, requests - 1000000);
+  const calcProCost = 199 + (calcProOverage * 0.001);
+  
+  const recommendedPlan = calcProCost <= calcStarterCost ? "Pro" : "Starter";
+  const currentCost = recommendedPlan === "Pro" ? calcProCost : calcStarterCost;
+  const savings = recommendedPlan === "Pro" ? calcStarterCost - calcProCost : 0;
+
+  const renderCTA = (plan: typeof PRICING_PLANS[0]) => {
+    const isLoading = loadingPlan === plan.name;
+    const baseClasses = "w-full min-h-[44px] rounded-md text-sm font-semibold transition-all duration-300 flex items-center justify-center tracking-wide group";
+    
+    let styleClasses = "";
+    if (plan.style === "primary-glow") {
+      styleClasses = "bg-[#8B5CF6] hover:bg-[#8B5CF6]/90 text-black shadow-[0_0_20px_rgba(0,212,255,0.4)]";
+    } else if (plan.style === "ghost-cyan") {
+      styleClasses = "bg-transparent border border-[#8B5CF6]/40 text-[#8B5CF6] hover:bg-[#8B5CF6]/10";
+    } else {
+      styleClasses = "bg-transparent border border-white/20 text-white hover:bg-white/5";
+    }
+
+    if (plan.ctaAction === "checkout") {
+      return (
+        <button 
+          onClick={() => handleCheckout(plan)}
+          disabled={!isCheckoutEnabled || isLoading}
+          className={cn(baseClasses, styleClasses, !isCheckoutEnabled && "opacity-50 cursor-not-allowed")}
+        >
+          {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : (
+            <>
+              {plan.cta}
+              <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+            </>
+          )}
+        </button>
+      );
+    } else if (plan.ctaAction === "sales") {
+      return (
+        <a href="mailto:sales@krixaisecurity.com" className={cn(baseClasses, styleClasses)}>
+          {plan.cta}
+          <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+        </a>
+      );
+    } else if (plan.ctaAction === "waitlist") {
+      return (
+        <form className="w-full flex flex-col gap-2" onSubmit={(e) => { e.preventDefault(); alert("Thanks for joining the waitlist!"); }}>
+          <input type="email" placeholder="Enter your email" required className="w-full min-h-[44px] rounded-md border border-white/20 bg-white/5 px-4 text-sm text-white focus:outline-none focus:border-[#8B5CF6]/50 transition-colors" />
+          <button type="submit" className={cn(baseClasses, styleClasses)}>
+            {plan.cta}
+            <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+          </button>
+        </form>
+      );
+    } else {
+      return (
+        <Link href="/auth/sign-up" className={cn(baseClasses, styleClasses)}>
+          {plan.cta}
+          <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+        </Link>
+      );
+    }
+  };
+
   return (
     <section className="relative w-full bg-black py-24 lg:py-32 overflow-hidden flex flex-col items-center">
       {isTestMode && (
@@ -230,108 +306,151 @@ export function PricingTable({ isCheckoutEnabled = false, isTestMode = false }: 
         {/* Section Header */}
         <div className="flex flex-col items-center text-center max-w-2xl mx-auto mb-20">
           <h1 className="text-4xl md:text-5xl lg:text-[3.5rem] font-medium tracking-tight text-white text-balance leading-[1.1] mb-6">
-            Pricing built for production.
+            Simple, Usage-Based Pricing
           </h1>
           <p className="text-lg lg:text-[19px] text-neutral-400 max-w-2xl leading-[1.6] font-normal tracking-wide">
-            Predictable, usage-based pricing. Secure your AI infrastructure today.
+            Protect every AI request. Pay only for what you use.
             <br />
-            <span className="text-sm text-neutral-500 mt-2 block">Note: Indian prices exclude 18% GST. International billing via sales contact only.</span>
+            <span className="text-sm text-neutral-500 mt-2 block">Cancel anytime.</span>
           </p>
-          
-          {/* Trust Row */}
-          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 mt-8">
-            {[
-              "No credit card required",
-              "Cancel anytime",
-              "Instant API access",
-              "Secure payments"
-            ].map((item, i) => (
-              <div key={i} className="flex items-center space-x-2 text-[13px] text-neutral-400">
-                <Check className="w-3.5 h-3.5 text-neutral-500" strokeWidth={2.5} />
-                <span>{item}</span>
-              </div>
-            ))}
-          </div>
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 xl:gap-8 w-full mb-16 items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 xl:gap-6 w-full mb-24 items-stretch">
           {PRICING_PLANS.map((plan, i) => (
             <div 
               key={i}
               className={cn(
-                "relative flex flex-col p-8 rounded-[var(--radius-lg)] border transition-all duration-300 h-full",
+                "relative flex flex-col p-8 rounded-2xl border transition-all duration-300 h-full",
                 plan.highlighted 
-                  ? "bg-[var(--color-surface-hover)] border-indigo-500/50 shadow-[0_0_30px_rgba(99,102,241,0.15)]" 
-                  : "bg-[var(--color-surface)] border-[var(--color-border)] hover:bg-[var(--color-surface-hover)]"
+                  ? "bg-[#000000] border-[#8B5CF6]/40 shadow-[0_0_30px_rgba(0,212,255,0.15)] xl:scale-[1.03] z-10" 
+                  : "bg-[#050505] border-white/10 hover:bg-[#0A0A0A]"
               )}
             >
-              {plan.comingSoon && (
-                <div className="absolute -top-3 right-6 px-3 py-1 bg-gradient-to-b from-neutral-800 to-neutral-900 border border-white/[0.1] shadow-[0_4px_12px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.1)] rounded-full z-10 flex items-center justify-center">
-                  <span className="text-[10px] font-semibold text-neutral-300 uppercase tracking-[0.1em] drop-shadow-sm">Coming Soon</span>
+              {plan.badge && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-[#8B5CF6]/20 border border-[#8B5CF6]/50 rounded-full z-10">
+                  <span className="text-[10px] font-bold text-[#8B5CF6] uppercase tracking-wider">{plan.badge}</span>
                 </div>
               )}
 
               <div className="flex flex-col flex-1">
-                <div className="xl:min-h-[140px] flex flex-col">
-                  <h3 className="text-xl font-semibold text-white tracking-wide mb-2">{plan.name}</h3>
-                  <p className="text-sm text-muted leading-relaxed pr-2">
-                    {plan.description}
+                <div className="mb-6">
+                  <h3 className={cn("text-xl font-medium tracking-wide mb-2", plan.highlighted ? "text-[#8B5CF6]" : "text-white")}>{plan.name}</h3>
+                  <p className="text-sm text-neutral-400 leading-relaxed min-h-[40px]">
+                    {plan.tagline}
                   </p>
                 </div>
                 
-                <div className="xl:min-h-[90px] flex items-baseline mb-6">
-                  <span className="text-4xl font-medium tracking-tight text-white leading-none">
-                    {isIndia === null ? "..." : isIndia ? plan.priceInr : plan.priceUsd}
-                  </span>
-                  {plan.interval && (
-                    <span className="text-sm font-medium text-muted ml-1.5">{plan.interval}</span>
+                <div className="flex items-baseline mb-2 min-h-[48px] items-center">
+                  {plan.comingSoon ? (
+                    <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-md text-[11px] font-bold text-neutral-400 uppercase tracking-widest">
+                      Coming Soon
+                    </span>
+                  ) : (
+                    <>
+                      <span className="text-5xl font-medium tracking-tight text-white leading-none">
+                        {plan.priceDisplay}
+                      </span>
+                      {plan.interval && (
+                        <span className="text-sm font-medium text-neutral-500 ml-2">{plan.interval}</span>
+                      )}
+                    </>
                   )}
                 </div>
+                
+                {plan.belowPrice && (
+                  <p className="text-xs text-neutral-400 mb-6 font-mono">{plan.belowPrice}</p>
+                )}
+                {!plan.belowPrice && <div className="mb-6 h-[16px]" />}
 
-                <div className="w-full h-[1px] bg-[var(--color-border)] mb-6" />
+                <p className="text-sm text-neutral-300 leading-relaxed mb-8 border-b border-white/10 pb-8 min-h-[100px]">
+                  {plan.description}
+                </p>
 
                 <ul className="space-y-4 mb-8 flex-1">
                   {plan.features.map((feature, idx) => (
                     <li key={idx} className="flex items-start">
-                      <div className="w-5 h-5 rounded-full bg-white/[0.05] border border-[var(--color-border)] flex items-center justify-center shrink-0 mt-[2px] mr-3">
-                        <Check className="w-3 h-3 text-neutral-300" strokeWidth={2.5} />
+                      <div className="w-5 h-5 rounded-full bg-white/5 border border-white/10 flex items-center justify-center shrink-0 mt-[2px] mr-3">
+                        <Check className={cn("w-3 h-3", plan.highlighted ? "text-[#8B5CF6]" : "text-neutral-300")} strokeWidth={2.5} />
                       </div>
-                      <span className="text-sm text-neutral-300 leading-relaxed">{feature}</span>
+                      <span className="text-sm text-neutral-300">{feature}</span>
                     </li>
                   ))}
                 </ul>
               </div>
 
-              <div className="mt-auto">
-                <button 
-                  onClick={() => handleCheckout(plan)}
-                  disabled={plan.comingSoon || loadingPlan === plan.name || (!isCheckoutEnabled && !plan.comingSoon)}
-                  className={cn(
-                    "w-full min-h-[44px] rounded-[var(--radius-md)] text-sm font-semibold transition-all duration-300 flex items-center justify-center tracking-wide",
-                    (plan.comingSoon || (!isCheckoutEnabled && !plan.comingSoon))
-                      ? "bg-white/[0.02] border border-white/[0.04] text-neutral-600 cursor-not-allowed"
-                      : plan.highlighted
-                        ? "bg-indigo-500 hover:bg-indigo-400 text-white shadow-[0_4px_14px_rgba(99,102,241,0.3)]"
-                        : "bg-white text-black hover:bg-neutral-200"
-                  )}
-                >
-                {loadingPlan === plan.name ? (
-                  <Loader2 className="w-5 h-5 animate-spin text-current" />
-                ) : !isCheckoutEnabled && !plan.comingSoon ? (
-                  "Payments are temporarily unavailable"
-                ) : (
-                  plan.cta
+              <div className="mt-auto flex flex-col gap-3">
+                {renderCTA(plan)}
+                {plan.extraLine && (
+                  <p className="text-xs text-center text-neutral-500">{plan.extraLine}</p>
                 )}
-                </button>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Separated Plan Notes */}
-        <div className="mt-4 text-xs text-muted leading-relaxed text-center font-medium max-w-2xl mx-auto">
-          * For the Starter plan, when your 50,000 monthly prompt scans are used, scanning pauses until the next billing cycle. Need more capacity? Contact us at <a href="mailto:sales@krixaisecurity.com" className="text-indigo-400 hover:text-indigo-300 transition-colors underline underline-offset-2">sales@krixaisecurity.com</a>
+        {/* Usage Calculator */}
+        <div className="w-full max-w-4xl mx-auto bg-[#050505] border border-white/10 rounded-2xl p-8 lg:p-12">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-10 gap-6">
+            <div>
+              <h3 className="text-2xl font-medium text-white mb-2">Estimate Your Monthly Cost</h3>
+              <p className="text-neutral-400 text-sm">See how your cost scales with your application's growth.</p>
+            </div>
+            <div className="text-right">
+              <div className="text-4xl font-medium text-white">${currentCost.toLocaleString(undefined, {minimumFractionDigits: 0, maximumFractionDigits: 0})}<span className="text-lg text-neutral-500">/mo</span></div>
+              <div className="text-sm font-medium text-[#8B5CF6] mt-1">Recommended: {recommendedPlan} Plan</div>
+            </div>
+          </div>
+
+          <div className="mb-12">
+            <div className="flex justify-between text-sm text-neutral-400 mb-4">
+              <span>Monthly AI Requests</span>
+              <span className="text-white font-mono">{requests.toLocaleString()}</span>
+            </div>
+            <input
+              type="range"
+              min="10000"
+              max="2000000"
+              step="10000"
+              value={requests}
+              onChange={(e) => setRequests(parseInt(e.target.value))}
+              className="w-full h-2 bg-neutral-800 rounded-lg appearance-none cursor-pointer accent-[#8B5CF6]"
+            />
+            <div className="flex justify-between text-xs text-neutral-500 mt-2">
+              <span>10k</span>
+              <span>2M+</span>
+            </div>
+          </div>
+
+          <div className="bg-[#000000] border border-[#8B5CF6]/20 rounded-xl p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="text-sm text-neutral-300">
+              {recommendedPlan === "Pro" ? (
+                <>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xl">💡</span>
+                    <strong className="text-white">Smart Upgrade</strong>
+                  </div>
+                  <p>You'd pay <span className="text-red-400 line-through">${calcStarterCost.toLocaleString()}</span> on Starter overage.</p>
+                  <p className="text-[#8B5CF6] font-medium mt-1">You save ${savings.toLocaleString()}/mo by switching to Pro.</p>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center gap-2 mb-1">
+                    <Check className="w-4 h-4 text-[#8B5CF6]" />
+                    <strong className="text-white">Starter Plan Details</strong>
+                  </div>
+                  <p>Base: $49/mo + {calcStarterOverage.toLocaleString()} overage × $0.002 = ${calcStarterCost.toLocaleString()}/mo</p>
+                </>
+              )}
+            </div>
+            
+            <button 
+              onClick={() => handleCheckout(PRICING_PLANS.find(p => p.name === recommendedPlan)!)}
+              className="px-6 py-3 bg-white text-black hover:bg-neutral-200 font-semibold rounded-md text-sm whitespace-nowrap transition-colors"
+            >
+              Start Free Trial on {recommendedPlan}
+            </button>
+          </div>
         </div>
 
       </div>

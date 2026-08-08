@@ -12,36 +12,36 @@ function cn(...inputs: ClassValue[]) {
 
 const FAQS = [
   {
-    question: "What is Krixai?",
-    answer: "Krixai is a runtime AI security firewall that inspects prompts before they reach your LLM. It acts as a middle layer, analyzing incoming requests for threats and returning ALLOW, WARN, or BLOCK decisions based on your policies."
+    question: "How are requests counted?",
+    answer: "Each API call to Krixai counts as one request — whether through proxy mode (/v1/chat/completions) or standalone scan (/v1/scan). A single proxied request that scans both input and output counts as one request, not two. Streaming responses count the same as non-streaming."
   },
   {
-    question: "Which AI providers are supported?",
-    answer: "Krixai is entirely provider-agnostic. Because it sits between your application backend and the LLM via a standard REST API, it works with any AI provider you choose to use, including OpenAI, Anthropic, Google Gemini, Cohere, and others."
+    question: "What happens when I exceed my included requests?",
+    answer: "Free plan: Requests beyond 10,000 are passed through to your LLM unscanned (fail-open). Your app continues to work — you just lose Krixai protection until the next billing cycle. We'll notify you at 80% usage.\n\nStarter & Pro: Overage requests are automatically scanned and billed at your plan's overage rate. No interruption, no cutoff. You'll see real-time usage in your dashboard."
   },
   {
-    question: "How long does integration take?",
-    answer: "Most developers can integrate Krixai into their existing application flow in just a few minutes using our straightforward REST API endpoints. You only need to pass the prompt to our API before sending it to your model."
+    question: "Do I need a credit card for the Free plan?",
+    answer: "No. Sign up with just an email. You won't be asked for a card unless you upgrade."
   },
   {
-    question: "Does Krixai store my prompts?",
-    answer: "Prompt data is temporarily cached for processing and retained for a maximum of 30 days solely for the purpose of populating your workspace's threat logs. Your prompts are never used to train our models."
+    question: "Can I switch plans mid-month?",
+    answer: "Yes. Upgrades take effect immediately — you get the new plan's features and request quota right away (prorated). Downgrades take effect at the start of your next billing cycle."
   },
   {
-    question: "What attacks can Krixai detect?",
-    answer: "Krixai detects prompt injections, jailbreak attempts, adversarial attacks, and sensitive data leakage (PII) before they can reach your underlying model or compromise your system."
+    question: "Do you store or train on my data?",
+    answer: "No. Krixai processes your requests in real-time and does not store the content of your prompts or model responses. Detection logs contain metadata only: timestamps, detection categories, confidence scores, and actions taken — never the actual text. We never use customer data for model training."
   },
   {
-    question: "Will Krixai slow down my application?",
-    answer: "Krixai is engineered for low-latency runtime security. Our inspection engine is highly optimized to ensure that adding the security layer introduces minimal overhead to your request pipeline."
+    question: "Does Krixai store my LLM API keys?",
+    answer: "No. When you pass your LLM provider key via the Authorization header, it exists in memory only for the duration of the request and is never written to disk, logged, or stored. If you use our key vault feature, keys are encrypted at rest using AES-256 and are only decrypted in memory at request time."
   },
   {
-    question: "What happens when a threat is detected?",
-    answer: "When an incoming prompt is flagged, Krixai issues an immediate ALLOW, WARN, or BLOCK decision. You can configure how strict these decisions should be using customizable workspace policies."
+    question: "What if Krixai goes down? Will my AI app break?",
+    answer: "No. Krixai is designed to fail-open. If our service is unavailable, requests are routed directly to your LLM provider. Your application continues to function normally — you temporarily lose Krixai's protection, but you never experience downtime because of us. Pro and Enterprise plans include uptime SLAs."
   },
   {
-    question: "Can I use Krixai in production?",
-    answer: "Yes, Krixai is designed to be highly reliable and fail-open by default—meaning if Krixai is temporarily unavailable, your requests can be configured to pass through without breaking your application."
+    question: "Is there a long-term contract?",
+    answer: "No. All plans are month-to-month. Cancel anytime from your dashboard."
   }
 ];
 
@@ -53,23 +53,22 @@ export function Faq() {
   };
 
   return (
-    <section className="relative w-full bg-black py-24 lg:py-32 overflow-hidden flex flex-col items-center border-t border-white/[0.04]">
+    <section className="relative w-full bg-black py-24 lg:py-32 overflow-hidden flex flex-col items-center">
       {/* Background Glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-[50%] bg-[radial-gradient(ellipse_at_top,rgba(99,102,241,0.05),transparent_70%)] pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[80%] h-[50%] bg-[radial-gradient(ellipse_at_top,rgba(0,212,255,0.05),transparent_70%)] pointer-events-none" />
 
-      <div className="max-w-[48rem] mx-auto px-6 lg:px-8 w-full relative z-10 flex flex-col items-center">
+      <div className="max-w-[85rem] mx-auto px-6 lg:px-12 w-full relative z-10 flex flex-col items-center">
 
         {/* Section Header */}
         <p className="text-[12px] text-neutral-500 mb-4 font-semibold uppercase tracking-[0.2em] text-center">
           Frequently Asked Questions
         </p>
-        <h2 className="text-3xl md:text-4xl lg:text-[2.5rem] font-medium tracking-tight text-neutral-50 text-balance leading-[1.15] mb-6 text-center">
+        <h2 className="text-3xl md:text-4xl lg:text-[2.5rem] font-medium tracking-tight text-white leading-[1.15] mb-12 text-center max-w-2xl">
           Everything you need to know before integrating Krixai.
         </h2>
-        <div className="w-12 h-1 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full mb-12" />
 
-        {/* Accordion */}
-        <div className="w-full space-y-4">
+        {/* Accordion Grid */}
+        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
           {FAQS.map((faq, idx) => {
             const isOpen = openIndex === idx;
 
@@ -77,28 +76,28 @@ export function Faq() {
               <div
                 key={idx}
                 className={cn(
-                  "border rounded-2xl overflow-hidden transition-all duration-300",
-                  isOpen ? "bg-white/[0.04] border-white/10" : "bg-transparent border-white/[0.04] hover:border-white/[0.08]"
+                  "border rounded-2xl overflow-hidden transition-all duration-300 h-fit",
+                  isOpen ? "bg-[#000000] border-[#8B5CF6]/30 shadow-[0_0_20px_rgba(0,212,255,0.1)]" : "bg-[#050505] border-white/10 hover:border-white/20 hover:bg-[#0A0A0A]"
                 )}
               >
                 <button
                   onClick={() => toggleFAQ(idx)}
-                  className="w-full px-6 py-5 flex items-center justify-between text-left focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:rounded-2xl"
+                  className="w-full px-6 py-6 flex items-start justify-between text-left focus:outline-none focus:ring-2 focus:ring-[#8B5CF6]/50 focus:rounded-2xl"
                   aria-expanded={isOpen}
                 >
                   <span className={cn(
-                    "font-medium text-[15px] sm:text-base pr-4 transition-colors",
-                    isOpen ? "text-white" : "text-neutral-300"
+                    "font-medium text-[15px] sm:text-base pr-4 transition-colors leading-snug",
+                    isOpen ? "text-[#8B5CF6]" : "text-white"
                   )}>
                     {faq.question}
                   </span>
                   <div className={cn(
-                    "w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-colors",
-                    isOpen ? "bg-white/10" : "bg-white/[0.03]"
+                    "w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-colors mt-[-2px]",
+                    isOpen ? "bg-[#8B5CF6]/10" : "bg-white/5"
                   )}>
                     <ChevronDown className={cn(
-                      "w-4 h-4 text-neutral-400 transition-transform duration-300",
-                      isOpen ? "rotate-180" : ""
+                      "w-4 h-4 transition-transform duration-300",
+                      isOpen ? "text-[#8B5CF6] rotate-180" : "text-neutral-400"
                     )} />
                   </div>
                 </button>
@@ -111,7 +110,7 @@ export function Faq() {
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                     >
-                      <div className="px-6 pb-6 text-neutral-400 leading-[1.6] text-[15px]">
+                      <div className="px-6 pb-6 text-neutral-300 leading-relaxed text-[15px] whitespace-pre-wrap">
                         {faq.answer}
                       </div>
                     </motion.div>

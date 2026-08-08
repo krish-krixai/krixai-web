@@ -72,7 +72,7 @@ export function Cta() {
             </Link>
           )}
           <Link
-            href="/docs"
+            href="https://docs.krixaisecurity.com"
             className="bg-[#0A0D12] text-neutral-300 border border-white/[0.08] px-8 py-3.5 rounded-full text-[14px] font-medium tracking-wide hover:bg-[#111111] hover:text-white hover:border-white/[0.15] hover:scale-[1.02] transition-all duration-300 ease-out shadow-sm flex items-center justify-center w-full sm:w-auto"
           >
             Read the docs

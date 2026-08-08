@@ -60,7 +60,7 @@ export function ResearchCta() {
           </Link>
 
           {/* Card 3 */}
-          <Link href="/docs" className="group flex flex-col p-6 bg-[#0A0A0A] border border-white/[0.06] rounded-xl hover:bg-[#111111] hover:border-white/[0.1] transition-all duration-300">
+          <Link href="https://docs.krixaisecurity.com" className="group flex flex-col p-6 bg-[#0A0A0A] border border-white/[0.06] rounded-xl hover:bg-[#111111] hover:border-white/[0.1] transition-all duration-300">
             <div className="w-10 h-10 rounded-lg bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-5">
               <FileCode className="w-5 h-5 text-purple-400" />
             </div>

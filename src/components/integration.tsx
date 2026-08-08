@@ -102,7 +102,7 @@ export function Integration() {
           className="relative z-10"
         >
           <Link
-            href="/docs"
+            href="https://docs.krixaisecurity.com"
             className="bg-white text-black px-8 py-3.5 rounded-full text-[14px] font-semibold tracking-wide hover:scale-[1.02] hover:bg-neutral-200 transition-all duration-300 ease-out flex items-center justify-center w-full sm:w-auto group shadow-[0_0_20px_rgba(255,255,255,0.1)]"
           >
             <span>Read the Docs</span>

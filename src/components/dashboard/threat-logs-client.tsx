@@ -1,110 +1,48 @@
 "use client";
 
-import React, { useState, useMemo, useRef, useEffect } from "react";
-import { 
-  Search, Filter, Calendar, Shield, ShieldAlert, Cpu, Activity, Download, X, 
-  ChevronRight, ChevronLeft, ChevronDown, CheckCircle2, AlertTriangle, 
-  XCircle, Copy, Clock, Lock, FileText, FileJson, Check,
-  Orbit, Box, Sparkles, Zap, Server
-} from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Search, X, Lock, ChevronLeft, ChevronRight, AlertTriangle, ShieldCheck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { useWorkspace } from "@/components/providers/workspace-provider";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-import { createClient } from "@/utils/supabase/client";
-import { useWorkspace } from "@/components/providers/workspace-provider";
-
-// Data Types
-type LogDecision = "ALLOW" | "WARN" | "BLOCK";
-type RiskLevel = "Low" | "Medium" | "High" | "Critical";
-
-interface Threat {
-  type: string;
-  description: string;
-  severity: "High" | "Critical" | "Medium";
-}
-
-interface ThreatLog {
-  id: string;
-  timestamp: string;
-  provider: string;
-  prompt: string;
-  attackCategory: string;
-  riskScore: number;
-  decision: LogDecision;
-  latency: number;
-  status: "Passed" | "Flagged" | "Blocked";
-  source: "API" | "PLAYGROUND" | "SDK";
-  threats: Threat[];
-  reason: string;
-  sanitizedPrompt: string | null;
-  matchedPolicyName: string | null;
-  coreDecision: LogDecision | null;
-}
-
-const getDecisionBadge = (decision: LogDecision) => {
-  switch (decision) {
-    case "ALLOW": return "text-green-400 bg-green-500/10";
-    case "WARN": return "text-amber-400 bg-amber-500/10";
-    case "BLOCK": return "text-red-400 bg-red-500/10";
-  }
-};
-
-const getRiskLevel = (score: number): RiskLevel => {
-  if (score < 30) return "Low";
-  if (score < 60) return "Medium";
-  if (score < 85) return "High";
-  return "Critical";
-};
-
-const getRiskColors = (score: number) => {
-  if (score < 30) return { text: "text-green-400", bg: "bg-green-500/10", border: "border-green-500/20" };
-  if (score < 60) return { text: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20" };
-  if (score < 85) return { text: "text-orange-400", bg: "bg-orange-500/10", border: "border-orange-500/20" };
-  return { text: "text-red-400", bg: "bg-red-500/10", border: "border-red-500/20" };
-};
-
-const ProviderLogo = ({ provider, className }: { provider: string, className?: string }) => {
-  const Icon = provider === "OpenAI" ? Orbit : 
-               provider === "Anthropic" ? Box : 
-               provider === "Gemini" ? Sparkles : 
-               provider === "Groq" ? Zap : Server;
-  return (
-    <div className={cn("flex items-center justify-center w-6 h-6 rounded bg-white/[0.03] border border-white/[0.08]", className)}>
-      <Icon className="w-3.5 h-3.5 text-neutral-400" />
-    </div>
-  );
-};
-
 export function ThreatLogsClient() {
   const { activeWorkspace } = useWorkspace();
-  const [logs, setLogs] = useState<ThreatLog[]>([]);
+  const [logs, setLogs] = useState<any[]>([]);
   const [totalLogs, setTotalLogs] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [isMounted, setIsMounted] = useState(false);
-  const [search, setSearch] = useState("");
-  const [sourceFilter, setSourceFilter] = useState<"ALL" | "API" | "PLAYGROUND">("ALL");
-  const [selectedLog, setSelectedLog] = useState<ThreatLog | null>(null);
+  const [selectedLog, setSelectedLog] = useState<any | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [copiedStates, setCopiedStates] = useState<Record<string, boolean>>({});
-  const [showExportMenu, setShowExportMenu] = useState(false);
-  const exportRef = useRef<HTMLDivElement>(null);
-  
   const rowsPerPage = 12;
+
   async function fetchLogs() {
     if (!activeWorkspace) return;
     setIsLoading(true);
-    
     try {
-      const res = await fetch(`/api/logs?page=${currentPage}&limit=${rowsPerPage}&search=${encodeURIComponent(search)}&source=${sourceFilter}`);
+      const res = await fetch(`/api/logs?page=${currentPage}&limit=${rowsPerPage}`);
       if (!res.ok) throw new Error("Failed to fetch logs");
-      
       const data = await res.json();
-      setLogs(data.logs || []);
+      
+      // We map the backend real data to the terminal visual format
+      setLogs(data.logs.map((log: any) => ({
+        id: log.id,
+        status: log.decision === "BLOCK" ? "BLK" : log.decision === "WARN" ? "FLG" : "PAS",
+        time: new Date(log.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+        fullTime: new Date(log.timestamp).toLocaleString(),
+        category: log.attackCategory || "None",
+        conf: `${log.riskScore}%`,
+        latency: `${log.latency}ms`,
+        sourceIp: "203.0.113.42", // Mock IP for detail
+        apiKey: log.provider,
+        subType: log.reason?.substring(0,20) + "...",
+        mode: log.decision === "BLOCK" ? "Blocking" : "Monitoring",
+        prompt: log.prompt
+      })) || []);
       setTotalLogs(data.total || 0);
     } catch (error) {
       console.error("Error fetching logs:", error);
@@ -115,430 +53,195 @@ export function ThreatLogsClient() {
 
   useEffect(() => {
     fetchLogs();
-  }, [currentPage, search, sourceFilter, activeWorkspace]);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-  
-  useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      if (exportRef.current && !exportRef.current.contains(e.target as Node)) {
-        setShowExportMenu(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, []);
-
-  const metrics = useMemo(() => {
-    const recent = logs.slice(0, 20); // most recent 20 for quick stats
-    if (recent.length === 0) return { total: 0, blocked: 0, warnings: 0, allowed: 0, avgRisk: 0, avgTime: 0 };
-    return {
-      total: recent.length,
-      blocked: recent.filter(l => l.decision === "BLOCK").length,
-      warnings: recent.filter(l => l.decision === "WARN").length,
-      allowed: recent.filter(l => l.decision === "ALLOW").length,
-      avgRisk: Math.round(recent.reduce((acc, curr) => acc + curr.riskScore, 0) / recent.length),
-      avgTime: Math.round(recent.reduce((acc, curr) => acc + curr.latency, 0) / recent.length),
-    };
-  }, [logs]);
-
-  const totalPages = Math.ceil(totalLogs / rowsPerPage);
-
-  const handleCopy = (text: string, id: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedStates({ ...copiedStates, [id]: true });
-    setTimeout(() => setCopiedStates(prev => ({ ...prev, [id]: false })), 2000);
-  };
-
-  if (!isMounted || isLoading) {
-    return (
-      <div className="flex-1 flex flex-col items-center justify-center text-neutral-500 font-mono text-[14px] h-full">
-        <div className="w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin mb-3" />
-        Loading real-time logs...
-      </div>
-    );
-  }
+  }, [currentPage, activeWorkspace]);
 
   return (
-    <div className="flex flex-col flex-1 h-full relative overflow-hidden">
-      
-      {/* SUMMARY METRICS */}
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-6 mb-8 shrink-0">
-        {[
-          { label: "Threats Today", value: metrics.blocked + metrics.warnings, icon: ShieldAlert, color: "text-indigo-400" },
-          { label: "Blocked", value: metrics.blocked, icon: XCircle, color: "text-red-400" },
-          { label: "Warnings", value: metrics.warnings, icon: AlertTriangle, color: "text-amber-400" },
-          { label: "Allowed", value: metrics.allowed, icon: CheckCircle2, color: "text-green-400" },
-          { label: "Avg Risk", value: metrics.avgRisk, icon: Activity, color: "text-white", suffix: "/ 100" },
-          { label: "Avg Latency", value: metrics.avgTime, icon: Clock, color: "text-white", suffix: "ms" },
-        ].map(m => (
-          <div key={m.label} className="bg-[#0A0A0A] border border-white/[0.08] rounded-xl p-5 flex flex-col justify-between hover:border-white/[0.15] transition-colors group h-32">
-            <div className="flex items-center justify-between text-neutral-400 mb-2">
-              <span className="text-[14px] font-medium">{m.label}</span>
-              <m.icon className="w-4 h-4 opacity-70 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <div className="flex items-baseline space-x-1">
-              <span className={cn("text-3xl font-semibold tracking-tight", m.color)}>{m.value}</span>
-              {m.suffix && <span className="text-[13px] font-medium text-neutral-500">{m.suffix}</span>}
-            </div>
-          </div>
-        ))}
-      </div>
+    <div className="flex-1 p-8 font-mono text-[13px] bg-[#000000] min-h-screen text-neutral-300 relative">
+      <div className="max-w-[1000px] mx-auto space-y-6">
+        
+        <div className="text-white text-[15px] font-medium mb-6 tracking-wide">Detection Logs</div>
 
-      {/* TOOLBAR */}
-      <div className="bg-[#0A0A0A] border border-white/[0.08] rounded-t-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-4 shrink-0 relative z-20">
-        <div className="flex items-center space-x-4 w-full sm:w-auto">
-          <div className="relative group w-full sm:w-80">
-            <Search className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input 
-              type="text" 
-              placeholder="Search prompts, users, providers..." 
-              value={search}
-              onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
-              className="w-full h-10 bg-white/[0.03] border border-white/[0.08] rounded-lg pl-9 pr-4 text-[14px] text-neutral-200 placeholder:text-neutral-500 focus:outline-none focus:border-white/[0.2] transition-colors"
-            />
+        {/* Filters */}
+        <div className="flex items-center gap-4 mb-6">
+          <div className="text-neutral-500">Filters:</div>
+          <div className="flex items-center gap-2 text-[12px]">
+            <select className="bg-transparent border border-white/10 rounded-sm px-2 py-1.5 text-white focus:outline-none focus:border-white/30">
+              <option>All</option>
+            </select>
+            <select className="bg-transparent border border-white/10 rounded-sm px-2 py-1.5 text-white focus:outline-none focus:border-white/30">
+              <option>Prompt Injection</option>
+            </select>
+            <select className="bg-transparent border border-white/10 rounded-sm px-2 py-1.5 text-white focus:outline-none focus:border-white/30">
+              <option>Blocked</option>
+            </select>
+            <select className="bg-transparent border border-white/10 rounded-sm px-2 py-1.5 text-white focus:outline-none focus:border-white/30">
+              <option>Today</option>
+            </select>
+            <button className="bg-white/5 border border-white/10 rounded-sm p-1.5 text-neutral-400 hover:text-white transition-colors">
+              <Search className="w-4 h-4" />
+            </button>
           </div>
-          
-          <div className="hidden lg:flex items-center space-x-2">
-            <div className="bg-white/[0.03] p-1 rounded-lg border border-white/[0.05] flex items-center">
-              {(["ALL", "API", "PLAYGROUND"] as const).map(filter => (
-                <button 
-                  key={filter} 
-                  onClick={() => { setSourceFilter(filter); setCurrentPage(1); }}
-                  className={cn(
-                    "px-3 py-1.5 rounded-md text-[13px] font-medium transition-colors",
-                    sourceFilter === filter 
-                      ? "bg-white/[0.08] text-white" 
-                      : "text-neutral-500 hover:text-neutral-300 transparent"
-                  )}
-                >
-                  {filter === "ALL" ? "All" : filter === "API" ? "API" : "Playground"}
-                </button>
-              ))}
-            </div>
-            {["Date Range", "Provider", "Risk Level"].map(filter => (
-              <button key={filter} className="h-10 px-4 bg-white/[0.03] border border-white/[0.08] rounded-lg text-[13px] font-medium text-neutral-400 hover:text-white hover:bg-white/[0.06] flex items-center transition-colors">
-                {filter} <ChevronDown className="w-4 h-4 ml-2 opacity-60" />
-              </button>
-            ))}
+          <div className="ml-auto">
+            <button className="flex items-center gap-2 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-3 py-1.5 rounded-sm hover:bg-indigo-500/20 transition-colors">
+              <Lock className="w-3.5 h-3.5" /> [Export CSV] PRO
+            </button>
           </div>
         </div>
 
-        <div className="flex items-center space-x-4 w-full sm:w-auto justify-end">
-          <button className="text-[13px] font-medium text-neutral-500 hover:text-neutral-300 transition-colors px-2">Clear Filters</button>
-          <div className="w-px h-5 bg-white/[0.1]" />
-          <div className="relative" ref={exportRef}>
-            <button 
-              onClick={() => setShowExportMenu(!showExportMenu)}
-              className="h-10 px-4 bg-white/[0.03] border border-white/[0.08] rounded-lg text-[13px] font-medium text-neutral-300 hover:text-white hover:bg-white/[0.06] flex items-center transition-colors"
-            >
-              <Download className="w-4 h-4 mr-2 text-neutral-400" /> Export
-              <ChevronDown className="w-4 h-4 ml-2 opacity-60" />
-            </button>
-            
-            <AnimatePresence>
-              {showExportMenu && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 5 }} transition={{ duration: 0.15 }}
-                  className="absolute right-0 top-full mt-2 w-48 bg-[#1A1A1A] border border-white/[0.08] rounded-lg shadow-xl overflow-hidden py-1 z-50"
-                >
-                  <button className="w-full px-4 py-2.5 text-left text-[13px] font-medium text-neutral-400 cursor-not-allowed flex items-center justify-between">
-                    Export as CSV <span className="text-[10px] bg-white/[0.05] px-1.5 py-0.5 rounded">Soon</span>
-                  </button>
-                  <button className="w-full px-4 py-2.5 text-left text-[13px] font-medium text-neutral-400 cursor-not-allowed flex items-center justify-between">
-                    Export as JSON <span className="text-[10px] bg-white/[0.05] px-1.5 py-0.5 rounded">Soon</span>
-                  </button>
-                  <button className="w-full px-4 py-2.5 text-left text-[13px] font-medium text-neutral-400 cursor-not-allowed flex items-center justify-between">
-                    Export as PDF <span className="text-[10px] bg-white/[0.05] px-1.5 py-0.5 rounded">Soon</span>
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-      </div>
-
-      {/* TABLE DATA */}
-      <div className="flex-1 bg-transparent border-x border-white/[0.08] overflow-auto custom-scrollbar relative z-0">
-        {logs.length === 0 ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8">
-            <div className="w-20 h-20 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center mb-6">
-              <ShieldAlert className="w-8 h-8 text-indigo-400" />
-            </div>
-            <h3 className="text-[16px] font-medium text-white mb-2">No threat history yet</h3>
-            <p className="text-[14px] text-neutral-500 max-w-sm mb-6 leading-relaxed">Start scanning prompts in the playground or adjust your filters to view forensic history.</p>
-            <button className="h-9 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-[13px] font-medium transition-colors">
-              Open Playground
-            </button>
-          </div>
-        ) : (
-          <table className="w-full text-left border-collapse min-w-[1200px]">
-            <thead className="sticky top-0 bg-[#0A0A0A] border-b border-white/[0.08] z-20">
+        {/* Table */}
+        <div className="border border-white/10 rounded-sm bg-[#050505] overflow-hidden">
+          <table className="w-full text-left">
+            <thead className="border-b border-white/10">
               <tr>
-                {["Timestamp", "Source", "Provider", "Prompt Preview", "Category", "Risk Score", "Decision", "Latency"].map(th => (
-                  <th key={th} className="px-6 py-4 text-[14px] font-medium text-neutral-400 whitespace-nowrap">{th}</th>
-                ))}
+                <th className="px-5 py-3.5 font-medium text-neutral-500">Status</th>
+                <th className="px-5 py-3.5 font-medium text-neutral-500">Time</th>
+                <th className="px-5 py-3.5 font-medium text-neutral-500">Category</th>
+                <th className="px-5 py-3.5 font-medium text-neutral-500">Conf.</th>
+                <th className="px-5 py-3.5 font-medium text-neutral-500">Latency</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/[0.04]">
-              {logs.map((log) => {
-                const riskColors = getRiskColors(log.riskScore);
-                const riskLevel = getRiskLevel(log.riskScore);
-                
-                return (
-                  <tr 
-                    key={log.id} 
-                    onClick={() => setSelectedLog(log)}
-                    className="group hover:bg-white/[0.02] cursor-pointer transition-colors"
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-[14px] text-neutral-300">{log.timestamp}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={cn(
-                        "inline-flex px-2 py-1 rounded text-[12px] font-medium border",
-                        log.source === "API" ? "text-indigo-400 bg-indigo-500/10 border-indigo-500/20" : 
-                        log.source === "SDK" ? "text-blue-400 bg-blue-500/10 border-blue-500/20" : 
-                        "text-neutral-400 bg-white/[0.05] border-white/[0.1]"
-                      )}>
-                        {log.source === "API" ? "API" : log.source === "SDK" ? "SDK" : "Playground"}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center space-x-3">
-                        <ProviderLogo provider={log.provider} />
-                        <span className="text-[14px] font-medium text-neutral-200">{log.provider}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4">
-                      <div className="text-[14px] text-neutral-400 group-hover:text-neutral-200 truncate max-w-[300px] xl:max-w-[450px] transition-colors">
-                        {log.prompt}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      {log.attackCategory === "None" ? (
-                        <span className="text-[14px] text-neutral-600">—</span>
-                      ) : (
-                        <span className="inline-flex items-center px-2.5 py-1 rounded text-[13px] font-medium text-red-400 bg-red-500/10">
-                          <AlertTriangle className="w-3.5 h-3.5 mr-1.5" /> {log.attackCategory}
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center space-x-2">
-                        <span className={cn("text-[13px] font-medium", riskColors.text)}>{log.riskScore}</span>
-                        <span className={cn("text-[13px] font-medium", riskColors.text)}>{riskLevel}</span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={cn("inline-flex items-center justify-center px-2.5 py-1 rounded-md text-[13px] font-medium border border-transparent", getDecisionBadge(log.decision))}>
-                        {log.decision === "BLOCK" ? "Blocked" : log.decision === "WARN" ? "Warning" : "Allowed"}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="text-[14px] text-neutral-400">
-                        {log.latency} ms
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })}
+            <tbody className="divide-y divide-white/5">
+              {isLoading ? (
+                <tr><td colSpan={5} className="px-5 py-12 text-center text-neutral-500">Scanning logs...</td></tr>
+              ) : logs.length === 0 ? (
+                <tr><td colSpan={5} className="px-5 py-12 text-center text-neutral-500">No logs found.</td></tr>
+              ) : logs.map((log) => (
+                <tr 
+                  key={log.id} 
+                  onClick={() => setSelectedLog(log)}
+                  className="border-b border-white/5 hover:bg-white/[0.04] cursor-pointer transition-colors"
+                >
+                  <td className="px-5 py-3.5 flex items-center gap-2">
+                    <span className={cn(
+                      "w-2 h-2 rounded-full",
+                      log.status === "BLK" ? "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]" : 
+                      log.status === "FLG" ? "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)]" : 
+                      "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]"
+                    )} />
+                    <span className={
+                      log.status === "BLK" ? "text-red-400 font-medium" : 
+                      log.status === "FLG" ? "text-amber-400 font-medium" : 
+                      "text-green-400 font-medium"
+                    }>{log.status}</span>
+                  </td>
+                  <td className="px-5 py-3.5 text-neutral-400">{log.time}</td>
+                  <td className="px-5 py-3.5 text-white">{log.category}</td>
+                  <td className="px-5 py-3.5">{log.conf}</td>
+                  <td className="px-5 py-3.5 text-neutral-400">{log.latency}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
-        )}
+        </div>
+
+        {/* Pagination */}
+        <div className="flex items-center justify-between text-neutral-500">
+          <div className="flex items-center gap-3">
+            <button 
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(p => p - 1)}
+              className="hover:text-white disabled:opacity-30 transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <span className="text-white">{currentPage}</span> / {Math.max(1, Math.ceil(totalLogs / rowsPerPage))}
+            <button 
+              disabled={currentPage >= Math.ceil(totalLogs / rowsPerPage)}
+              onClick={() => setCurrentPage(p => p + 1)}
+              className="hover:text-white disabled:opacity-30 transition-colors"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+          <div>Showing {logs.length > 0 ? (currentPage - 1) * rowsPerPage + 1 : 0}-{Math.min(currentPage * rowsPerPage, totalLogs)} of {totalLogs} detections</div>
+        </div>
+
       </div>
 
-      {/* PAGINATION */}
-      <div className="bg-[#0A0A0A] border border-white/[0.08] rounded-b-xl p-4 flex items-center justify-between shrink-0 relative z-20">
-        <div className="text-[13px] font-medium text-neutral-500 pl-2">
-          Showing <span className="text-white">{logs.length > 0 ? (currentPage - 1) * rowsPerPage + 1 : 0}</span> to <span className="text-white">{Math.min(currentPage * rowsPerPage, totalLogs)}</span> of <span className="text-white">{totalLogs}</span> logs
-        </div>
-        <div className="flex items-center space-x-2">
-          <button 
-            disabled={currentPage === 1}
-            onClick={() => setCurrentPage(p => p - 1)}
-            className="w-9 h-9 flex items-center justify-center rounded-lg bg-white/[0.03] border border-white/[0.08] text-neutral-400 hover:text-white hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <span className="text-[13px] font-medium text-neutral-400 px-3">Page {currentPage} of {Math.max(1, totalPages)}</span>
-          <button 
-            disabled={currentPage === totalPages || totalPages === 0}
-            onClick={() => setCurrentPage(p => p + 1)}
-            className="w-9 h-9 flex items-center justify-center rounded-lg bg-white/[0.03] border border-white/[0.08] text-neutral-400 hover:text-white hover:bg-white/[0.08] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
-
-      {/* SLIDE-OVER DETAILS PANEL */}
+      {/* Slide-in Detail Panel */}
       <AnimatePresence>
         {selectedLog && (
           <>
             <motion.div 
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm z-40"
-              onClick={() => setSelectedLog(null)}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}
+              className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40" 
+              onClick={() => setSelectedLog(null)} 
             />
             <motion.div 
-              initial={{ x: "100%", boxShadow: "-20px 0 40px rgba(0,0,0,0)" }} 
-              animate={{ x: 0, boxShadow: "-20px 0 40px rgba(0,0,0,0.5)" }} 
-              exit={{ x: "100%", boxShadow: "-20px 0 40px rgba(0,0,0,0)" }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="absolute top-0 right-0 bottom-0 w-full sm:w-[650px] bg-[#0A0A0A] border-l border-white/[0.08] z-50 flex flex-col"
+              initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", damping: 30, stiffness: 300 }}
+              className="fixed top-0 right-0 bottom-0 w-[480px] bg-[#0A0A0A] border-l border-white/10 z-50 flex flex-col font-mono text-[13px] shadow-2xl"
             >
-              <div className="px-8 py-6 border-b border-white/[0.08] flex items-center justify-between shrink-0 bg-[#0A0A0A]">
-                <div>
-                  <div className="flex items-center space-x-3 mb-1">
-                    <h2 className="text-[18px] font-medium text-white">Threat Investigation</h2>
-                    <span className={cn(
-                      "inline-flex px-2 py-0.5 rounded text-[12px] font-medium border",
-                      selectedLog.source === "API" ? "text-indigo-400 bg-indigo-500/10 border-indigo-500/20" : 
-                      selectedLog.source === "SDK" ? "text-blue-400 bg-blue-500/10 border-blue-500/20" : 
-                      "text-neutral-400 bg-white/[0.05] border-white/[0.1]"
-                    )}>
-                      {selectedLog.source === "API" ? "API" : selectedLog.source === "SDK" ? "SDK" : "Playground"}
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-3 text-[13px] text-neutral-500 font-mono">
-                    <span>{selectedLog.id}</span>
-                    <span className="w-1 h-1 rounded-full bg-neutral-600" />
-                    <span>{selectedLog.timestamp}</span>
-                  </div>
-                </div>
-                <button 
-                  onClick={() => setSelectedLog(null)}
-                  className="w-9 h-9 flex items-center justify-center rounded-lg text-neutral-400 hover:text-white hover:bg-white/[0.05] transition-colors"
-                >
-                  <X className="w-5 h-5" />
+              
+              <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
+                <div className="text-white text-[14px] font-medium tracking-wide">Detection Detail</div>
+                <button onClick={() => setSelectedLog(null)} className="text-neutral-500 hover:text-white transition-colors">
+                  [x]
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto custom-scrollbar p-8 space-y-8">
+              <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6 text-neutral-400">
                 
-                {/* Metric Strip */}
-                <div className="flex gap-4">
-                  <div className="flex-1 p-5 bg-white/[0.02] border border-white/[0.05] rounded-xl flex flex-col justify-center">
-                    <span className="text-[14px] font-medium text-neutral-400 mb-2 flex items-center"><Shield className="w-4 h-4 mr-2" /> Decision</span>
-                    <span className={cn("text-[16px] font-semibold", getDecisionBadge(selectedLog.decision).split(' ')[0])}>
-                      {selectedLog.decision === "BLOCK" ? "Blocked" : selectedLog.decision === "WARN" ? "Warning" : "Allowed"}
-                    </span>
-                  </div>
-                  <div className="flex-1 p-5 bg-white/[0.02] border border-white/[0.05] rounded-xl flex flex-col justify-center">
-                    <span className="text-[14px] font-medium text-neutral-400 mb-2 flex items-center"><Activity className="w-4 h-4 mr-2" /> Risk Score</span>
-                    <div className="flex items-baseline space-x-2">
-                      <span className={cn("text-[24px] font-semibold leading-none", getRiskColors(selectedLog.riskScore).text)}>{selectedLog.riskScore}</span>
-                      <span className="text-[13px] font-medium text-neutral-500">/ 100</span>
-                    </div>
-                  </div>
-                  <div className="flex-1 p-5 bg-white/[0.02] border border-white/[0.05] rounded-xl flex flex-col justify-center">
-                    <span className="text-[14px] font-medium text-neutral-400 mb-2 flex items-center"><Cpu className="w-4 h-4 mr-2" /> Provider</span>
-                    <div className="flex items-center space-x-2">
-                      <ProviderLogo provider={selectedLog.provider} className="w-5 h-5" />
-                      <span className="text-[16px] font-semibold text-white">{selectedLog.provider}</span>
-                    </div>
-                  </div>
+                <div className="grid grid-cols-[120px_1fr] gap-3">
+                  <div>Request ID:</div><div className="text-white">{selectedLog.id}</div>
+                  <div>Timestamp:</div><div className="text-white">{selectedLog.fullTime}</div>
+                  <div>Source IP:</div><div className="text-white">{selectedLog.sourceIp}</div>
+                  <div>Provider:</div><div className="text-white">{selectedLog.apiKey}</div>
                 </div>
 
-                {/* Reasoning */}
+                <div className="h-px w-full bg-white/10 my-4" />
+
+                <div className="grid grid-cols-[120px_1fr] gap-3">
+                  <div>Category:</div><div className="text-white">{selectedLog.category}</div>
+                  <div>Sub-type:</div><div className="text-white">{selectedLog.subType}</div>
+                  <div>Confidence:</div>
+                  <div className="text-white flex items-center gap-3">
+                    {selectedLog.conf}
+                    <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden">
+                      <div className="h-full bg-white/40" style={{ width: selectedLog.conf }} />
+                    </div>
+                  </div>
+                  <div>Action:</div>
+                  <div className={cn("font-medium", selectedLog.status === "BLK" ? "text-red-400" : selectedLog.status === "FLG" ? "text-amber-400" : "text-green-400")}>
+                    {selectedLog.status === "BLK" ? "BLOCKED" : selectedLog.status === "FLG" ? "FLAGGED" : "ALLOWED"}
+                  </div>
+                  <div>Scan time:</div><div className="text-white">{selectedLog.latency}</div>
+                  <div>Mode:</div><div className="text-white">{selectedLog.mode}</div>
+                </div>
+
+                <div className="h-px w-full bg-white/10 my-4" />
+
                 <div>
-                  <h4 className="text-[14px] font-medium text-white mb-3">Policy Evaluation</h4>
-                  <div className="p-5 rounded-xl bg-white/[0.02] border border-white/[0.05] text-[14px] text-neutral-300 leading-relaxed font-medium">
-                    {selectedLog.matchedPolicyName && (
-                      <div className="mb-4 pb-4 border-b border-white/[0.05]">
-                        <div className="text-[14px] text-neutral-500 mb-1">Matched Custom Policy</div>
-                        <div className="text-indigo-400">{selectedLog.matchedPolicyName}</div>
-                      </div>
-                    )}
-                    <div className="mb-4 pb-4 border-b border-white/[0.05]">
-                      <div className="text-[14px] text-neutral-500 mb-1">Core Engine Decision</div>
-                      <div className={cn("font-medium", (selectedLog.coreDecision || selectedLog.decision) === "ALLOW" ? "text-green-400" : (selectedLog.coreDecision || selectedLog.decision) === "WARN" ? "text-amber-400" : "text-red-400")}>
-                         {(selectedLog.coreDecision || selectedLog.decision) === "BLOCK" ? "Blocked" : (selectedLog.coreDecision || selectedLog.decision) === "WARN" ? "Warning" : "Allowed"}
-                      </div>
-                    </div>
-                    <div className="text-[14px] text-neutral-500 mb-1">Explanation</div>
-                    {selectedLog.reason}
-                  </div>
-                </div>
-
-                {/* Detected Threats */}
-                {selectedLog.threats.length > 0 && (
-                  <div>
-                    <h4 className="text-[14px] font-medium text-white mb-3">Detected Threats</h4>
-                    <div className="space-y-3">
-                      {selectedLog.threats.map((t, i) => (
-                        <div key={i} className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 flex items-start space-x-4">
-                          <AlertTriangle className="w-5 h-5 text-red-400 mt-0.5 shrink-0" />
-                          <div>
-                            <div className="text-[14px] font-medium text-red-400">{t.type}</div>
-                            <div className="text-[14px] text-red-300 mt-1 leading-relaxed">{t.description}</div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Original Prompt */}
-                <div className="relative group">
-                  <h4 className="text-[14px] font-medium text-white mb-3 flex items-center justify-between">
-                    Original Payload
-                    <button onClick={() => handleCopy(selectedLog.prompt, 'prompt')} className="text-neutral-400 hover:text-white transition-colors flex items-center text-[12px] bg-white/[0.05] px-2.5 py-1 rounded">
-                      {copiedStates['prompt'] ? <Check className="w-3.5 h-3.5 text-green-400 mr-1.5" /> : <Copy className="w-3.5 h-3.5 mr-1.5" />}
-                      {copiedStates['prompt'] ? "Copied" : "Copy"}
-                    </button>
-                  </h4>
-                  <div className="p-5 rounded-xl bg-[#030303] border border-white/[0.05] text-[14px] font-mono text-neutral-300 leading-relaxed break-words">
+                  <div className="mb-2">Original Payload:</div>
+                  <div className="p-4 bg-[#050505] border border-white/10 rounded-sm text-neutral-300 break-words leading-relaxed">
                     {selectedLog.prompt}
                   </div>
                 </div>
 
-                {/* Sanitized Prompt */}
-                {selectedLog.sanitizedPrompt && (
-                  <div className="relative group">
-                    <h4 className="text-[14px] font-medium text-white mb-3 flex items-center justify-between">
-                      Sanitized Payload
-                      <button onClick={() => handleCopy(selectedLog.sanitizedPrompt!, 'sanitized')} className="text-neutral-400 hover:text-white transition-colors flex items-center text-[12px] bg-white/[0.05] px-2.5 py-1 rounded">
-                        {copiedStates['sanitized'] ? <Check className="w-3.5 h-3.5 text-green-400 mr-1.5" /> : <Copy className="w-3.5 h-3.5 mr-1.5" />}
-                        {copiedStates['sanitized'] ? "Copied" : "Copy"}
-                      </button>
-                    </h4>
-                    <div className="p-5 rounded-xl bg-[#05150a] border border-[#4ade80]/20 text-[14px] font-mono text-[#4ade80]/90 leading-relaxed break-words">
-                      {selectedLog.sanitizedPrompt}
-                    </div>
+                <div className="mt-8 border border-white/10 rounded-sm p-5 bg-[#050505]">
+                  <div className="text-neutral-300 mb-4 font-medium flex items-center gap-2">
+                    <ShieldCheck className="w-4 h-4 text-neutral-500" />
+                    This is not an attack (false positive)
                   </div>
-                )}
-
-                {/* Execution Timeline */}
-                <div>
-                  <h4 className="text-[14px] font-medium text-white mb-4">Execution Timeline</h4>
-                  <div className="flex flex-col space-y-2 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-px before:bg-white/[0.08]">
-                    <div className="flex items-center space-x-4 text-[14px] text-neutral-400 relative z-10">
-                      <div className="w-6 h-6 rounded-full bg-[#1A1A1A] border border-white/[0.1] flex items-center justify-center shrink-0"><ChevronRight className="w-3.5 h-3.5 text-neutral-500" /></div>
-                      <span>Request received from gateway</span>
-                    </div>
-                    <div className="flex items-center space-x-4 text-[14px] text-neutral-400 relative z-10 py-2">
-                      <div className="w-6 h-6 rounded-full bg-[#1A1A1A] border border-indigo-500/50 flex items-center justify-center shrink-0"><Lock className="w-3.5 h-3.5 text-indigo-400" /></div>
-                      <span className="text-indigo-300">Security layers processed ({selectedLog.latency}ms)</span>
-                    </div>
-                    <div className="flex items-center space-x-4 text-[14px] font-medium text-neutral-300 relative z-10">
-                      <div className={cn("w-6 h-6 rounded-full border flex items-center justify-center shrink-0 bg-[#1A1A1A]", selectedLog.decision === "ALLOW" ? "border-green-500/40" : "border-red-500/40")}>
-                        {selectedLog.decision === "ALLOW" ? <CheckCircle2 className="w-3.5 h-3.5 text-green-400" /> : <XCircle className="w-3.5 h-3.5 text-red-400" />}
-                      </div>
-                      <span className={selectedLog.decision === "ALLOW" ? "text-green-400" : "text-red-400"}>Action enforced: {selectedLog.decision === "BLOCK" ? "Blocked" : selectedLog.decision === "WARN" ? "Warning" : "Allowed"}</span>
-                    </div>
+                  <button 
+                    onClick={() => {
+                      alert("False positive reported. Thank you for improving the model!");
+                      setSelectedLog(null);
+                    }}
+                    className="bg-white/10 text-white hover:bg-white/20 transition-colors px-4 py-2 rounded-sm w-full font-medium tracking-wide"
+                  >
+                    [Report False Positive]
+                  </button>
+                  <div className="text-[11px] text-neutral-500 mt-3 text-center">
+                    *Available on all plans. Helps improve detection accuracy.
                   </div>
                 </div>
 
-                <div className="h-6" /> {/* Spacer */}
               </div>
             </motion.div>
           </>
         )}
       </AnimatePresence>
+
     </div>
   );
 }

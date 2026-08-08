@@ -59,7 +59,7 @@ export function SecurityHero() {
               Get Started
             </Link>
             <Link 
-              href="/docs"
+              href="https://docs.krixaisecurity.com"
               className="w-full sm:w-auto bg-white/[0.03] border border-white/[0.08] hover:bg-white/[0.08] text-white px-8 py-3.5 rounded-full text-[14px] font-medium transition-all duration-300 flex items-center justify-center group"
             >
               <span>View Documentation</span>

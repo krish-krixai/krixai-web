@@ -48,7 +48,7 @@ export function Hero() {
             Get Free API Key &rarr;
           </Link>
           <Link 
-            href="/docs"
+            href="https://docs.krixaisecurity.com"
             className="text-[16px] font-medium text-[#FFFFFF] border border-[#27272A] px-[32px] py-[14px] rounded-[10px] hover:bg-white/[0.05] transition-colors whitespace-nowrap"
           >
             View Documentation

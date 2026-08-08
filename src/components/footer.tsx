@@ -11,15 +11,17 @@ export function Footer() {
         {/* Left: Logo */}
         <div className="flex-1 flex justify-center md:justify-start">
           <Link href="/" className="flex items-center group opacity-80 hover:opacity-100 transition-opacity">
-            <span className="text-white font-bold text-[20px] tracking-tighter">Krixai</span>
+            <LogoLockup className="h-6 w-auto text-white" />
           </Link>
         </div>
 
         {/* Center: Links */}
         <div className="flex-1 flex flex-wrap items-center justify-center gap-x-[24px] gap-y-[12px]">
-          <Link href="/docs" className="text-[#71717A] text-[14px] hover:text-[#FFFFFF] transition-colors">Docs</Link>
+          <Link href="https://docs.krixaisecurity.com" className="text-[#71717A] text-[14px] hover:text-[#FFFFFF] transition-colors">Docs</Link>
           <Link href="/pricing" className="text-[#71717A] text-[14px] hover:text-[#FFFFFF] transition-colors">Pricing</Link>
           <Link href="/blog" className="text-[#71717A] text-[14px] hover:text-[#FFFFFF] transition-colors">Blog</Link>
+          <Link href="/terms" className="text-[#71717A] text-[14px] hover:text-[#FFFFFF] transition-colors">Terms</Link>
+          <Link href="/privacy" className="text-[#71717A] text-[14px] hover:text-[#FFFFFF] transition-colors">Privacy</Link>
           <a href="mailto:hello@krixaisecurity.com" className="text-[#71717A] text-[14px] hover:text-[#FFFFFF] transition-colors">hello@krixaisecurity.com</a>
         </div>
 

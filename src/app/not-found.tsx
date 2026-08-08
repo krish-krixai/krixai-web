@@ -64,7 +64,7 @@ export default function NotFound() {
             Go Home
           </Link>
           <Link
-            href="/docs"
+            href="https://docs.krixaisecurity.com"
             className="flex items-center justify-center gap-2 w-full sm:w-auto px-6 py-3 rounded-full bg-white/[0.05] text-white border border-white/[0.1] text-sm font-medium hover:bg-white/[0.1] transition-colors"
           >
             View Documentation
