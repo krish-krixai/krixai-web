@@ -15,7 +15,7 @@ export function TopNav() {
   const { activeWorkspace, memberships, switchWorkspace } = useWorkspace();
   const [isOpen, setIsOpen] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(3);
+  const [unreadCount, setUnreadCount] = useState(0);
   const pathname = usePathname();
   
   // Search Modal State
@@ -83,27 +83,6 @@ export function TopNav() {
                       </div>
                     ) : (
                       <>
-                        <div className="px-4 py-3 hover:bg-white/[0.03] border-b border-white/[0.05] transition-colors cursor-pointer group">
-                          <div className="flex items-start justify-between mb-1">
-                            <span className="text-red-400 font-medium">Critical Alert Blocked</span>
-                            <span className="text-neutral-500 text-[10px]">2m ago</span>
-                          </div>
-                          <p className="text-neutral-400">High-severity prompt injection attempt blocked.</p>
-                        </div>
-                        <div className="px-4 py-3 hover:bg-white/[0.03] border-b border-white/[0.05] transition-colors cursor-pointer group">
-                          <div className="flex items-start justify-between mb-1">
-                            <span className="text-white font-medium">New Team Member</span>
-                            <span className="text-neutral-500 text-[10px]">1h ago</span>
-                          </div>
-                          <p className="text-neutral-400">Alex joined the workspace.</p>
-                        </div>
-                        <div className="px-4 py-3 hover:bg-white/[0.03] transition-colors cursor-pointer group">
-                          <div className="flex items-start justify-between mb-1">
-                            <span className="text-amber-400 font-medium">Usage Warning</span>
-                            <span className="text-neutral-500 text-[10px]">5h ago</span>
-                          </div>
-                          <p className="text-neutral-400">80% of monthly quota used.</p>
-                        </div>
                       </>
                     )}
                   </div>
