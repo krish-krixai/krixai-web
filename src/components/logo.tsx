@@ -16,7 +16,7 @@ export function Logo({ className }: { className?: string }) {
         className="w-full h-full text-current"
       >
         <defs>
-          <linearGradient id="krixai-standalone-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
+          <linearGradient id="krixai-standalone-gradient" x1="13" y1="6" x2="23" y2="26" gradientUnits="userSpaceOnUse">
             <stop offset="0%" stopColor="#00D4FF" />
             <stop offset="100%" stopColor="#8B5CF6" />
           </linearGradient>
@@ -24,10 +24,8 @@ export function Logo({ className }: { className?: string }) {
         <g transform="translate(4, 0) skewX(-12)">
           {/* Stem */}
           <line x1="8" y1="4" x2="8" y2="28" stroke="currentColor" strokeWidth="2.5" />
-          {/* Top Beam */}
-          <line x1="8.5" y1="16" x2="22" y2="4" stroke="url(#krixai-standalone-gradient)" strokeWidth="2.5" />
-          {/* Bottom Beam */}
-          <line x1="8.5" y1="16" x2="22" y2="28" stroke="url(#krixai-standalone-gradient)" strokeWidth="2.5" />
+          {/* Chevron */}
+          <path d="M23 6 L13 16 L23 26" stroke="url(#krixai-standalone-gradient)" strokeWidth="2.5" strokeLinejoin="miter" fill="none" />
         </g>
       </svg>
     </div>
@@ -44,25 +42,23 @@ export function LogoLockup({ className }: { className?: string }) {
         className="w-full h-full text-current"
       >
         <defs>
-          <linearGradient id="krixai-lockup-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
+          <linearGradient id="krixai-lockup-gradient" x1="13" y1="6" x2="23" y2="26" gradientUnits="userSpaceOnUse">
             <stop offset="0%" stopColor="#00D4FF" />
             <stop offset="100%" stopColor="#8B5CF6" />
           </linearGradient>
           <mask id="text-slice">
             <rect x="0" y="0" width="140" height="32" fill="white" />
             {/* The laser slice representing deep packet inspection */}
-            <line x1="40" y1="26" x2="140" y2="12" stroke="black" strokeWidth="1.2" />
+            <line x1="30" y1="28" x2="140" y2="10" stroke="black" strokeWidth="1.5" />
           </mask>
         </defs>
 
         {/* ICON - The Kinetic Node */}
-        <g transform="translate(4, 0) skewX(-12)">
+        <g transform="translate(6, 0) skewX(-12)">
           {/* Stem */}
-          <line x1="8" y1="4" x2="8" y2="28" stroke="currentColor" strokeWidth="2.5" />
-          {/* Top Beam */}
-          <line x1="8.5" y1="16" x2="22" y2="4" stroke="#00D4FF" strokeWidth="2.5" />
-          {/* Bottom Beam */}
-          <line x1="8.5" y1="16" x2="22" y2="28" stroke="#8B5CF6" strokeWidth="2.5" />
+          <line x1="8" y1="6" x2="8" y2="26" stroke="currentColor" strokeWidth="2.5" />
+          {/* Chevron */}
+          <path d="M23 6 L13 16 L23 26" stroke="url(#krixai-lockup-gradient)" strokeWidth="2.5" strokeLinejoin="miter" fill="none" />
         </g>
 
         {/* WORDMARK - The Inspected Core */}
