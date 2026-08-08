@@ -80,6 +80,7 @@ export function PoliciesClient() {
   const [showTester, setShowTester] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [editingPolicy, setEditingPolicy] = useState<Policy | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
   
   // Test Policy State
   const [testPrompt, setTestPrompt] = useState("");
@@ -260,6 +261,52 @@ export function PoliciesClient() {
     }
   };
 
+  const handleImport = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !activeWorkspace) return;
+
+    try {
+      const text = await file.text();
+      const importedPolicies = JSON.parse(text);
+      if (!Array.isArray(importedPolicies)) {
+         alert("Invalid file format. Expected an array of policies.");
+         return;
+      }
+      
+      const newPoliciesData = importedPolicies.map((p: any, idx: number) => ({
+        workspace_id: activeWorkspace.id,
+        name: p.name || "Imported Policy",
+        description: p.description || "",
+        category_id: p.category_id || "normal",
+        action: p.action || "WARN",
+        risk_threshold: p.risk_threshold || 50,
+        provider_scope: p.provider_scope || "All Providers",
+        priority: policies.length + idx,
+        enabled: typeof p.enabled === 'boolean' ? p.enabled : false,
+        is_default: false
+      }));
+
+      const { data, error } = await supabase
+        .from('workspace_policies')
+        .insert(newPoliciesData)
+        .select();
+
+      if (!error && data) {
+        setPolicies([...policies, ...(data as Policy[])]);
+      } else {
+        console.error("Error importing policies:", error);
+        alert("Failed to import policies.");
+      }
+    } catch (e) {
+      console.error("Error parsing JSON:", e);
+      alert("Error parsing JSON file. Please ensure it's a valid JSON array.");
+    }
+    
+    if (fileInputRef.current) {
+       fileInputRef.current.value = "";
+    }
+  };
+
   const handleTestPolicies = async () => {
     if (!testPrompt.trim()) return;
     setIsTesting(true);
@@ -298,10 +345,21 @@ export function PoliciesClient() {
           </div>
           
           <div className="flex items-center space-x-3">
-            <button className="bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-sm px-4 py-1.5 transition-colors flex items-center">
-              <Download className="w-3 h-3 mr-2" /> [Import]
-            </button>
-            <button onClick={handleCreate} disabled={activeRole === 'VIEWER' || activeRole === 'DEVELOPER'} className="bg-white text-black hover:bg-neutral-200 rounded-sm px-4 py-1.5 font-medium flex items-center transition-colors disabled:opacity-50">
+          <input 
+            type="file" 
+            accept=".json" 
+            ref={fileInputRef} 
+            style={{ display: "none" }} 
+            onChange={handleImport} 
+          />
+          <button 
+            onClick={() => fileInputRef.current?.click()} 
+            disabled={activeRole === 'VIEWER' || activeRole === 'DEVELOPER'}
+            className="bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-sm px-4 py-1.5 transition-colors flex items-center disabled:opacity-50"
+          >
+            <Download className="w-3 h-3 mr-2" /> [Import]
+          </button>
+          <button onClick={handleCreate} disabled={activeRole === 'VIEWER' || activeRole === 'DEVELOPER'} className="bg-white text-black hover:bg-neutral-200 rounded-sm px-4 py-1.5 font-medium flex items-center transition-colors disabled:opacity-50">
               <Plus className="w-3 h-3 mr-2" /> [Create Policy]
             </button>
           </div>
