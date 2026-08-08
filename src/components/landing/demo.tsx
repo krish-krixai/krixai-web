@@ -125,7 +125,7 @@ export function Demo() {
                   <p className="text-neutral-400 text-[14px] mb-4 text-center">
                     This is just a simple demo. Ready to test real adversarial attacks like jailbreaks, roleplay, and data exfiltration?
                   </p>
-                  <Link href="/dashboard/policies?test=true" className="group flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-[14px] font-medium px-6 py-2.5 rounded-lg transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_30px_rgba(79,70,229,0.5)] w-full sm:w-auto">
+                  <Link href="/playground" className="group flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-[14px] font-medium px-6 py-2.5 rounded-lg transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_30px_rgba(79,70,229,0.5)] w-full sm:w-auto">
                     Try the Interactive Playground
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </Link>
