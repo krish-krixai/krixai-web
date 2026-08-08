@@ -23,11 +23,11 @@ export function Logo({ className }: { className?: string }) {
         </defs>
         <g transform="translate(4, 0) skewX(-12)">
           {/* Stem */}
-          <line x1="8" y1="4" x2="8" y2="28" stroke="currentColor" strokeWidth="6" strokeLinecap="round" />
+          <line x1="8" y1="4" x2="8" y2="28" stroke="currentColor" strokeWidth="2.5" />
           {/* Top Beam */}
-          <line x1="15" y1="15" x2="26" y2="4" stroke="url(#krixai-standalone-gradient)" strokeWidth="6" strokeLinecap="round" />
+          <line x1="8.5" y1="16" x2="22" y2="4" stroke="url(#krixai-standalone-gradient)" strokeWidth="2.5" />
           {/* Bottom Beam */}
-          <line x1="15" y1="17" x2="26" y2="28" stroke="url(#krixai-standalone-gradient)" strokeWidth="6" strokeLinecap="round" />
+          <line x1="8.5" y1="16" x2="22" y2="28" stroke="url(#krixai-standalone-gradient)" strokeWidth="2.5" />
         </g>
       </svg>
     </div>
@@ -56,13 +56,13 @@ export function LogoLockup({ className }: { className?: string }) {
         </defs>
 
         {/* ICON - The Kinetic Node */}
-        <g transform="translate(6, 0) skewX(-12)">
+        <g transform="translate(4, 0) skewX(-12)">
           {/* Stem */}
-          <line x1="8" y1="6" x2="8" y2="26" stroke="currentColor" strokeWidth="5.5" strokeLinecap="round" />
+          <line x1="8" y1="4" x2="8" y2="28" stroke="currentColor" strokeWidth="2.5" />
           {/* Top Beam */}
-          <line x1="14" y1="15" x2="24" y2="6" stroke="url(#krixai-lockup-gradient)" strokeWidth="5.5" strokeLinecap="round" />
+          <line x1="8.5" y1="16" x2="22" y2="4" stroke="#00D4FF" strokeWidth="2.5" />
           {/* Bottom Beam */}
-          <line x1="14" y1="17" x2="24" y2="26" stroke="url(#krixai-lockup-gradient)" strokeWidth="5.5" strokeLinecap="round" />
+          <line x1="8.5" y1="16" x2="22" y2="28" stroke="#8B5CF6" strokeWidth="2.5" />
         </g>
 
         {/* WORDMARK - The Inspected Core */}
