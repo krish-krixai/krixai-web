@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -7,6 +7,7 @@ function cn(...inputs: ClassValue[]) {
 }
 
 export function Logo({ className }: { className?: string }) {
+  const gradientId = useId();
   return (
     <div className={cn("relative flex items-center justify-center", className)}>
       <svg 
@@ -16,7 +17,7 @@ export function Logo({ className }: { className?: string }) {
         className="w-full h-full text-current"
       >
         <defs>
-          <linearGradient id="krixai-standalone-gradient" x1="13" y1="6" x2="23" y2="26" gradientUnits="userSpaceOnUse">
+          <linearGradient id={gradientId} x1="13" y1="6" x2="23" y2="26" gradientUnits="userSpaceOnUse">
             <stop offset="0%" stopColor="#00D4FF" />
             <stop offset="100%" stopColor="#8B5CF6" />
           </linearGradient>
@@ -25,7 +26,7 @@ export function Logo({ className }: { className?: string }) {
           {/* Stem */}
           <line x1="8" y1="4" x2="8" y2="28" stroke="currentColor" strokeWidth="2.5" />
           {/* Chevron */}
-          <path d="M23 6 L13 16 L23 26" stroke="url(#krixai-standalone-gradient)" strokeWidth="2.5" strokeLinejoin="miter" fill="none" />
+          <path d="M23 6 L13 16 L23 26" stroke={`url(#${gradientId})`} strokeWidth="2.5" strokeLinejoin="miter" fill="none" />
         </g>
       </svg>
     </div>
@@ -33,6 +34,8 @@ export function Logo({ className }: { className?: string }) {
 }
 
 export function LogoLockup({ className }: { className?: string }) {
+  const gradientId = useId();
+  const maskId = useId();
   return (
     <div className={cn("relative flex items-center", className)}>
       <svg 
@@ -42,11 +45,11 @@ export function LogoLockup({ className }: { className?: string }) {
         className="w-full h-full text-current"
       >
         <defs>
-          <linearGradient id="krixai-lockup-gradient" x1="13" y1="6" x2="23" y2="26" gradientUnits="userSpaceOnUse">
+          <linearGradient id={gradientId} x1="13" y1="6" x2="23" y2="26" gradientUnits="userSpaceOnUse">
             <stop offset="0%" stopColor="#00D4FF" />
             <stop offset="100%" stopColor="#8B5CF6" />
           </linearGradient>
-          <mask id="text-slice">
+          <mask id={maskId}>
             <rect x="0" y="0" width="140" height="32" fill="white" />
             {/* The laser slice representing deep packet inspection */}
             <line x1="30" y1="28" x2="140" y2="10" stroke="black" strokeWidth="1.5" />
@@ -58,7 +61,7 @@ export function LogoLockup({ className }: { className?: string }) {
           {/* Stem */}
           <line x1="8" y1="6" x2="8" y2="26" stroke="currentColor" strokeWidth="2.5" />
           {/* Chevron */}
-          <path d="M23 6 L13 16 L23 26" stroke="url(#krixai-lockup-gradient)" strokeWidth="2.5" strokeLinejoin="miter" fill="none" />
+          <path d="M23 6 L13 16 L23 26" stroke={`url(#${gradientId})`} strokeWidth="2.5" strokeLinejoin="miter" fill="none" />
         </g>
 
         {/* WORDMARK - The Inspected Core */}
@@ -70,7 +73,7 @@ export function LogoLockup({ className }: { className?: string }) {
           fontSize="23" 
           fill="currentColor" 
           letterSpacing="-0.03em"
-          mask="url(#text-slice)"
+          mask={`url(#${maskId})`}
         >
           KRIXAI
         </text>
