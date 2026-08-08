@@ -37,11 +37,9 @@ interface Policy {
 
 const DEFAULT_POLICIES: Partial<Policy>[] = [
   { name: "Prompt Injection Protection", description: "Blocks attempts to override system instructions or extract sensitive context.", category_id: "prompt_injection", action: "BLOCK", risk_threshold: 85, enabled: true, provider_scope: "All Providers", is_default: true, priority: 0 },
-  { name: "Tool Abuse Prevention", description: "Blocks excessive or unauthorized function calling attempts.", category_id: "tool_abuse", action: "BLOCK", risk_threshold: 70, enabled: true, provider_scope: "All Providers", is_default: true, priority: 1 },
-  { name: "Sensitive Data Scrubber", description: "Flags PII and financial data for review.", category_id: "sensitive_data", action: "WARN", risk_threshold: 50, enabled: true, provider_scope: "All Providers", is_default: true, priority: 2 },
-  { name: "Role Manipulation Guard", description: "Alerts on attempts to aggressively change the AI's persona.", category_id: "role_manipulation", action: "WARN", risk_threshold: 65, enabled: true, provider_scope: "All Providers", is_default: true, priority: 3 },
-  { name: "Unicode Obfuscation Filter", description: "Flags hidden unicode sequences used for evasion.", category_id: "unicode", action: "WARN", risk_threshold: 60, enabled: false, provider_scope: "All Providers", is_default: true, priority: 4 },
-  { name: "Default Allow", description: "Base policy for all safe traffic. Evaluated last.", category_id: "Normal Prompt", action: "ALLOW", risk_threshold: 0, enabled: true, provider_scope: "All Providers", is_default: true, priority: 5 }
+  { name: "Jailbreak Prevention", description: "Blocks complex adversarial patterns aimed at bypassing AI guardrails.", category_id: "jailbreak", action: "BLOCK", risk_threshold: 85, enabled: true, provider_scope: "All Providers", is_default: true, priority: 1 },
+  { name: "PII & Sensitive Data Filter", description: "Flags Personally Identifiable Information (PII) for review.", category_id: "pii", action: "WARN", risk_threshold: 60, enabled: true, provider_scope: "All Providers", is_default: true, priority: 2 },
+  { name: "Default Allow", description: "Base policy for all safe traffic. Evaluated last.", category_id: "normal", action: "ALLOW", risk_threshold: 0, enabled: true, provider_scope: "All Providers", is_default: true, priority: 3 }
 ];
 
 const getActionColors = (action: PolicyAction) => {
@@ -539,12 +537,9 @@ export function PoliciesClient() {
                       <label className="block text-[14px] font-medium text-neutral-400 mb-2">Category</label>
                       <select value={editingPolicy.category_id} onChange={e => handleEditChange('category_id', e.target.value)} className="w-full h-11 bg-white/[0.03] border border-white/[0.08] rounded-lg px-4 text-[14px] text-white appearance-none focus:outline-none focus:border-white/[0.2] transition-colors">
                           <option value="prompt_injection">Prompt Injection</option>
-                          <option value="tool_abuse">Tool Abuse</option>
-                          <option value="sensitive_data">Sensitive Data</option>
-                          <option value="role_manipulation">Role Manipulation</option>
-                          <option value="unicode">Unicode</option>
-                          <option value="Normal Prompt">Normal Prompt</option>
-                          <option value="All Threats">All Threats</option>
+                          <option value="jailbreak">Jailbreak</option>
+                          <option value="pii">PII Leakage</option>
+                          <option value="normal">Normal Prompt</option>
                        </select>
                     </div>
                     <div>
