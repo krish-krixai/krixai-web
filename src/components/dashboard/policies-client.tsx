@@ -287,74 +287,73 @@ export function PoliciesClient() {
   };
 
   return (
-    <div className="flex flex-col flex-1 pb-10 space-y-8">
+    <div className="flex flex-col flex-1 pb-10 space-y-8 p-8 font-mono text-[13px] bg-[#000000] min-h-screen text-neutral-300">
       
-      {/* HEADER */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 relative z-30">
-        <div>
-          <h1 className="text-[28px] font-semibold tracking-tight text-white mb-1.5">Policies</h1>
-          <p className="text-[14px] text-neutral-400 font-medium">Define how krixai evaluates, blocks and allows AI requests across your organization.</p>
-        </div>
-        
-        <div className="flex items-center space-x-3">
-          <button className="h-10 px-4 bg-[#0A0A0A] border border-white/10 rounded-lg text-[13px] font-medium text-neutral-300 hover:text-white hover:border-white/20 hover:bg-white/5 flex items-center transition-all">
-            <Download className="w-4 h-4 mr-2 text-neutral-400" /> Import Policy
-          </button>
-          <button onClick={handleCreate} disabled={activeRole === 'VIEWER' || activeRole === 'DEVELOPER'} className="group h-10 px-5 bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-900/50 disabled:text-white/50 rounded-lg text-[13px] font-medium text-white flex items-center transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_25px_rgba(79,70,229,0.5)]">
-            <Plus className="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform duration-300" /> Create Policy
-          </button>
-        </div>
-      </div>
-
-      {/* OVERVIEW METRICS */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
-        {[
-          { label: "Total Policies", value: policies.length, icon: FileCode2, color: "text-white", glow: "group-hover:shadow-[0_0_30px_rgba(255,255,255,0.05)]" },
-          { label: "Active", value: totalActive, icon: ShieldCheck, color: "text-[#10B981]", glow: "group-hover:shadow-[0_0_30px_rgba(16,185,129,0.15)] group-hover:border-[#10B981]/30" },
-          { label: "Disabled", value: totalDisabled, icon: Power, color: "text-neutral-500", glow: "" },
-          { label: "Default Policy", value: "Active", icon: ShieldAlert, color: "text-[#8B5CF6]", glow: "group-hover:shadow-[0_0_30px_rgba(139,92,246,0.15)] group-hover:border-[#8B5CF6]/30" },
-          { label: "Last Updated", value: "Just now", icon: Activity, color: "text-neutral-400", glow: "" }
-        ].map(m => (
-          <div key={m.label} className={cn("relative overflow-hidden bg-[#050505] border border-white/10 rounded-2xl p-6 transition-all duration-300 group cursor-default", m.glow)}>
-            <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="relative z-10 flex items-center justify-between text-neutral-400 mb-4 group-hover:text-neutral-300 transition-colors">
-              <span className="text-[13px] font-medium uppercase tracking-wider">{m.label}</span>
-              <m.icon className="w-4 h-4 opacity-50 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <div className={cn("relative z-10 text-[36px] font-semibold tracking-tight", m.color)}>{m.value}</div>
+      <div className="max-w-[1000px] mx-auto w-full space-y-8">
+        {/* HEADER */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-30">
+          <div>
+            <h1 className="text-white text-[15px] font-medium tracking-wide mb-1">Security Policies</h1>
+            <p className="text-[13px] text-neutral-500">Define how krixai evaluates, blocks and allows AI requests across your organization.</p>
           </div>
-        ))}
-      </div>
-
-      <div className="flex flex-col relative bg-[#0A0A0A] border border-white/[0.08] rounded-xl overflow-hidden shadow-lg">
-        {/* TOOLBAR */}
-        <div className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-white/[0.08]">
-          <div className="flex items-center space-x-4 w-full sm:w-auto">
-            <div className="relative group w-full sm:w-80">
-              <Search className="w-4 h-4 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input 
-                type="text" 
-                placeholder="Search policies, attack categories..." 
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full h-10 bg-white/[0.03] border border-white/[0.08] rounded-lg pl-9 pr-4 text-[14px] text-neutral-200 placeholder:text-neutral-500 focus:outline-none focus:border-white/[0.2] transition-colors"
-              />
-            </div>
-            
-            <div className="hidden lg:flex items-center space-x-2">
-              {["Attack Category", "Action", "Status", "Provider"].map(filter => (
-                <button key={filter} className="h-10 px-3 bg-transparent border border-transparent rounded-lg text-[13px] font-medium text-neutral-400 hover:text-white hover:bg-white/[0.03] flex items-center transition-colors">
-                  {filter} <ChevronDown className="w-4 h-4 ml-1.5 opacity-60" />
-                </button>
-              ))}
-            </div>
+          
+          <div className="flex items-center space-x-3">
+            <button className="bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-sm px-4 py-1.5 transition-colors flex items-center">
+              <Download className="w-3 h-3 mr-2" /> [Import]
+            </button>
+            <button onClick={handleCreate} disabled={activeRole === 'VIEWER' || activeRole === 'DEVELOPER'} className="bg-white text-black hover:bg-neutral-200 rounded-sm px-4 py-1.5 font-medium flex items-center transition-colors disabled:opacity-50">
+              <Plus className="w-3 h-3 mr-2" /> [Create Policy]
+            </button>
           </div>
-
-          <button onClick={() => setShowTester(true)} className="group h-10 px-5 bg-white hover:bg-neutral-200 text-black rounded-lg text-[13px] font-semibold flex items-center transition-all shadow-[0_0_15px_rgba(255,255,255,0.15)] hover:shadow-[0_0_25px_rgba(255,255,255,0.3)] ring-1 ring-white/50">
-            <PlayCircle className="w-4 h-4 mr-2 text-black/70 group-hover:text-black transition-colors" /> 
-            Test Simulator
-          </button>
         </div>
+
+        {/* OVERVIEW METRICS */}
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+          {[
+            { label: "Total Policies", value: policies.length, color: "text-white" },
+            { label: "Active", value: totalActive, color: "text-green-400" },
+            { label: "Disabled", value: totalDisabled, color: "text-neutral-500" },
+            { label: "Default Policy", value: "Active", color: "text-[#8B5CF6]" },
+            { label: "Last Updated", value: "Just now", color: "text-white" }
+          ].map((m, i) => (
+            <div key={i} className="bg-[#050505] border border-white/10 rounded-sm p-5 flex flex-col justify-between h-[120px]">
+              <div className="text-neutral-500">{m.label}</div>
+              <div>
+                <div className={cn("text-2xl font-medium mb-1", m.color)}>{m.value}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex flex-col bg-[#050505] border border-white/10 rounded-sm">
+          {/* TOOLBAR */}
+          <div className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-white/10">
+            <div className="flex items-center space-x-4 w-full sm:w-auto">
+              <div className="relative group w-full sm:w-80">
+                <Search className="w-4 h-4 text-neutral-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input 
+                  type="text" 
+                  placeholder="Search policies, attack categories..." 
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full h-9 bg-transparent border border-white/10 rounded-sm pl-9 pr-4 text-[13px] text-white placeholder:text-neutral-600 focus:outline-none focus:border-white/30 transition-colors"
+                />
+              </div>
+              
+              <div className="hidden lg:flex items-center space-x-2">
+                {["Attack Category", "Action", "Status", "Provider"].map(filter => (
+                  <button key={filter} className="h-9 px-3 bg-transparent border border-transparent rounded-sm text-[12px] font-medium text-neutral-500 hover:text-white hover:bg-white/5 flex items-center transition-colors">
+                    [{filter}] <ChevronDown className="w-3 h-3 ml-1.5 opacity-60" />
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <button onClick={() => setShowTester(true)} className="h-9 px-4 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-sm text-[13px] flex items-center transition-colors">
+              <PlayCircle className="w-3.5 h-3.5 mr-2" /> 
+              [Test Simulator]
+            </button>
+          </div>
 
         {/* POLICY LIST (DRAG & DROP) */}
         <div className="w-full">
@@ -460,32 +459,21 @@ export function PoliciesClient() {
             })}
           </Reorder.Group>
           {policies.length === 0 && (
-            <div className="relative py-24 flex flex-col items-center justify-center text-center overflow-hidden">
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(79,70,229,0.08)_0%,transparent_70%)] pointer-events-none" />
-              <motion.div 
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                className="relative w-20 h-20 bg-[#0A0A0A] border border-white/10 shadow-[0_0_40px_rgba(79,70,229,0.15)] rounded-2xl flex items-center justify-center mb-6"
-              >
-                <ShieldAlert className="w-10 h-10 text-indigo-400" />
-                <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10 pointer-events-none" />
-              </motion.div>
-              <h3 className="text-xl font-medium tracking-tight text-white mb-3">No Custom Policies Yet</h3>
-              <p className="text-[15px] text-neutral-400 mb-8 max-w-lg leading-relaxed">
-                You're currently using the krixai Default Protection Policy which covers Prompt Injection and Jailbreaks. Create your own custom rules to tailor security for your specific use cases.
-              </p>
-              <button onClick={handleCreate} disabled={activeRole === 'VIEWER' || activeRole === 'DEVELOPER'} className="group h-11 px-6 bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-900/50 rounded-xl text-[14px] font-medium text-white transition-all shadow-[0_0_20px_rgba(79,70,229,0.3)] hover:shadow-[0_0_30px_rgba(79,70,229,0.5)] flex items-center">
-                <Plus className="w-4 h-4 mr-2 group-hover:rotate-90 transition-transform duration-300" />
-                Create Your First Policy
+            <div className="p-16 flex flex-col items-center justify-center text-center">
+              <div className="text-neutral-500 mb-4">No custom policies yet.</div>
+              <div className="text-neutral-600 mb-6 max-w-md">You're currently using the krixai Default Protection Policy. Create custom rules to tailor security.</div>
+              <button onClick={handleCreate} disabled={activeRole === 'VIEWER' || activeRole === 'DEVELOPER'} className="bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-sm px-4 py-2 transition-colors">
+                [Create Your First Policy]
               </button>
             </div>
           )}
           
-          <div className="p-4 bg-[#0A0A0A] border-t border-white/[0.08] text-[13px] text-neutral-500 flex items-center justify-center space-x-2">
-            <Info className="w-4 h-4" />
-            <span>Policies are evaluated sequentially from top to bottom (Highest priority executes first).</span>
+          <div className="p-4 bg-white/5 border-t border-white/10 text-neutral-500 flex items-center justify-center space-x-2">
+            <span>Policies are evaluated sequentially from top to bottom.</span>
           </div>
         </div>
+      </div>
+      
       </div>
 
       {/* SLIDE-OVER POLICY EDITOR */}
