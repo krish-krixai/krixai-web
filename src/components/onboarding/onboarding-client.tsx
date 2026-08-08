@@ -8,7 +8,8 @@ import {
   BookOpen, Key
 } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
-import { LogoLockup } from "@/components/logo";
+import { LogoLockup, Logo } from "@/components/logo";
+import Link from "next/link";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
