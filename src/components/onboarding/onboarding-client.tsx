@@ -8,8 +8,10 @@ import { Logo } from "@/components/logo";
 
 export function OnboardingClient() {
   const [isCreatingWorkspace, setIsCreatingWorkspace] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   
   const handleCreateWorkspace = async () => {
+    setError(null);
     setIsCreatingWorkspace(true);
     const supabase = createClient();
     
@@ -20,12 +22,18 @@ export function OnboardingClient() {
     }
 
     // 1. Check if user already has a workspace
-    const { data: existingMember } = await supabase
+    const { data: existingMember, error: fetchError } = await supabase
       .from('workspace_members')
       .select('workspace_id')
       .eq('user_id', user.id)
       .limit(1)
       .maybeSingle();
+
+    if (fetchError && fetchError.code !== 'PGRST116') {
+      setError(`fetchError: ${fetchError.message}`);
+      setIsCreatingWorkspace(false);
+      return;
+    }
 
     if (existingMember) {
       document.cookie = `workspace_id=${existingMember.workspace_id}; path=/; max-age=31536000; SameSite=Lax`;
@@ -44,6 +52,7 @@ export function OnboardingClient() {
 
     if (wsError) {
       console.error("wsError", wsError?.message, wsError?.details, wsError);
+      setError(`wsError: ${wsError.message}`);
       setIsCreatingWorkspace(false);
       return;
     }
@@ -59,6 +68,7 @@ export function OnboardingClient() {
       
     if (memberError) {
       console.error("memberError", memberError?.message, memberError?.details, memberError);
+      setError(`memberError: ${memberError.message}`);
       setIsCreatingWorkspace(false);
       return;
     }
@@ -102,6 +112,11 @@ export function OnboardingClient() {
             <p className="text-[15px] text-neutral-400 font-medium mb-10 leading-relaxed">
               Let's secure your AI infrastructure in just a few steps. You'll be scanning prompts in under three minutes.
             </p>
+            {error && (
+              <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-200 text-sm text-left">
+                {error}
+              </div>
+            )}
             <button 
               onClick={handleCreateWorkspace}
               disabled={isCreatingWorkspace}
