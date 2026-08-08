@@ -19,9 +19,24 @@ export function OnboardingClient() {
       return;
     }
 
+    // 1. Check if user already has a workspace
+    const { data: existingMember } = await supabase
+      .from('workspace_members')
+      .select('workspace_id')
+      .eq('user_id', user.id)
+      .limit(1)
+      .maybeSingle();
+
+    if (existingMember) {
+      document.cookie = `workspace_id=${existingMember.workspace_id}; path=/; max-age=31536000; SameSite=Lax`;
+      window.location.href = "/dashboard";
+      return;
+    }
+
+    // 2. Create new workspace
     const finalWorkspaceName = user.user_metadata?.workspace_name || (user.user_metadata?.full_name ? `${user.user_metadata.full_name}'s Workspace` : "My Workspace");
-    const slug = finalWorkspaceName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
     const workspaceId = crypto.randomUUID();
+    const slug = `${finalWorkspaceName.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${workspaceId.substring(0, 6)}`;
     
     const { error: wsError } = await supabase
       .from('workspaces')
