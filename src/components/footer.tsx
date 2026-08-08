@@ -22,7 +22,7 @@ export function Footer() {
           <Link href="/blog" className="text-[#71717A] text-[14px] hover:text-[#FFFFFF] transition-colors">Blog</Link>
           <Link href="/terms" className="text-[#71717A] text-[14px] hover:text-[#FFFFFF] transition-colors">Terms</Link>
           <Link href="/privacy" className="text-[#71717A] text-[14px] hover:text-[#FFFFFF] transition-colors">Privacy</Link>
-          <a href="mailto:hello@krixaisecurity.com" className="text-[#71717A] text-[14px] hover:text-[#FFFFFF] transition-colors">hello@krixaisecurity.com</a>
+          <a href="mailto:support@krixaisecurity.com" className="text-[#71717A] text-[14px] hover:text-[#FFFFFF] transition-colors">support@krixaisecurity.com</a>
         </div>
 
         {/* Right: Copyright & Socials */}
