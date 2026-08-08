@@ -7,7 +7,6 @@ function cn(...inputs: ClassValue[]) {
 }
 
 export function Logo({ className }: { className?: string }) {
-  const gradientId = useId();
   return (
     <div className={cn("relative flex items-center justify-center", className)}>
       <svg 
@@ -16,17 +15,12 @@ export function Logo({ className }: { className?: string }) {
         xmlns="http://www.w3.org/2000/svg"
         className="w-full h-full text-current"
       >
-        <defs>
-          <linearGradient id={gradientId} x1="13" y1="6" x2="23" y2="26" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#00D4FF" />
-            <stop offset="100%" stopColor="#8B5CF6" />
-          </linearGradient>
-        </defs>
         <g transform="translate(4, 0) skewX(-12)">
           {/* Stem */}
-          <line x1="8" y1="4" x2="8" y2="28" stroke="currentColor" strokeWidth="2.5" />
+          <line x1="8" y1="4" x2="8" y2="28" stroke="currentColor" strokeWidth="1.8" />
           {/* Chevron */}
-          <path d="M23 6 L13 16 L23 26" stroke={`url(#${gradientId})`} strokeWidth="2.5" strokeLinejoin="miter" fill="none" />
+          <line x1="12" y1="16" x2="22" y2="6" stroke="#00D4FF" strokeWidth="1.8" strokeLinecap="square" />
+          <line x1="12" y1="16" x2="22" y2="26" stroke="#8B5CF6" strokeWidth="1.8" strokeLinecap="square" />
         </g>
       </svg>
     </div>
@@ -34,8 +28,9 @@ export function Logo({ className }: { className?: string }) {
 }
 
 export function LogoLockup({ className }: { className?: string }) {
-  const gradientId = useId();
-  const maskId = useId();
+  const rawMaskId = useId();
+  const maskId = rawMaskId.replace(/:/g, "");
+  
   return (
     <div className={cn("relative flex items-center", className)}>
       <svg 
@@ -45,10 +40,6 @@ export function LogoLockup({ className }: { className?: string }) {
         className="w-full h-full text-current"
       >
         <defs>
-          <linearGradient id={gradientId} x1="13" y1="6" x2="23" y2="26" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#00D4FF" />
-            <stop offset="100%" stopColor="#8B5CF6" />
-          </linearGradient>
           <mask id={maskId}>
             <rect x="0" y="0" width="140" height="32" fill="white" />
             {/* The laser slice representing deep packet inspection */}
@@ -59,9 +50,10 @@ export function LogoLockup({ className }: { className?: string }) {
         {/* ICON - The Kinetic Node */}
         <g transform="translate(6, 0) skewX(-12)">
           {/* Stem */}
-          <line x1="8" y1="6" x2="8" y2="26" stroke="currentColor" strokeWidth="2.5" />
+          <line x1="8" y1="6" x2="8" y2="26" stroke="currentColor" strokeWidth="1.8" />
           {/* Chevron */}
-          <path d="M23 6 L13 16 L23 26" stroke={`url(#${gradientId})`} strokeWidth="2.5" strokeLinejoin="miter" fill="none" />
+          <line x1="12" y1="16" x2="22" y2="6" stroke="#00D4FF" strokeWidth="1.8" strokeLinecap="square" />
+          <line x1="12" y1="16" x2="22" y2="26" stroke="#8B5CF6" strokeWidth="1.8" strokeLinecap="square" />
         </g>
 
         {/* WORDMARK - The Inspected Core */}
