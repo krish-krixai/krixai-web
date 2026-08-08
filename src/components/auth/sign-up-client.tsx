@@ -76,7 +76,7 @@ export function SignUpClient() {
     } else {
       if (data.user && !data.session) {
         // Email confirmation is required
-        router.push("/auth/verify-email");
+        router.push(`/auth/verify-email?email=${encodeURIComponent(email)}`);
       } else {
         // No email confirmation required
         router.push("/onboarding");
