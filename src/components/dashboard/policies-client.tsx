@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useWorkspace } from "@/components/providers/workspace-provider";
+import { useSearchParams } from "next/navigation";
 import { 
   ShieldAlert, Activity, ShieldCheck, Download, ChevronDown, 
   Search, Plus, FileCode2, GripVertical, MoreHorizontal, Copy, Trash2, 
@@ -73,6 +74,7 @@ const getPriorityLabel = (index: number, total: number) => {
 
 export function PoliciesClient() {
   const { activeWorkspace, activeRole } = useWorkspace();
+  const searchParams = useSearchParams();
   const supabase = createClient();
   const [isMounted, setIsMounted] = useState(false);
   const [policies, setPolicies] = useState<Policy[]>([]);
@@ -89,7 +91,10 @@ export function PoliciesClient() {
   
   useEffect(() => {
     setIsMounted(true);
-  }, []);
+    if (searchParams.get("test") === "true") {
+      setShowTester(true);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (activeWorkspace) {

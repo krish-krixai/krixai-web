@@ -105,8 +105,8 @@ export function IntegrationsSetupClient() {
             <a href="/dashboard" className="w-full sm:w-auto px-8 h-12 bg-white text-black hover:bg-neutral-200 rounded-xl text-[14px] font-bold shadow-[0_0_20px_rgba(255,255,255,0.15)] hover:shadow-[0_0_30px_rgba(255,255,255,0.25)] transition-all flex items-center justify-center">
               Open Dashboard
             </a>
-            <a href="/dashboard/playground" className="w-full sm:w-auto px-8 h-12 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-[14px] font-bold shadow-[0_0_20px_rgba(99,102,241,0.3)] transition-all flex items-center justify-center">
-              Open Playground
+            <a href="/dashboard/policies?test=true" className="w-full sm:w-auto px-8 h-12 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-[14px] font-bold shadow-[0_0_20px_rgba(99,102,241,0.3)] transition-all flex items-center justify-center">
+              Go to Playground <ArrowRight className="w-4 h-4 ml-2" />
             </a>
             <a href="/dashboard/threat-logs" className="w-full sm:w-auto px-8 h-12 bg-white/[0.05] hover:bg-white/[0.1] text-white border border-white/[0.1] rounded-xl text-[14px] font-bold transition-all flex items-center justify-center">
               View Threat Logs
@@ -388,8 +388,8 @@ export function IntegrationsSetupClient() {
                 <span className="flex items-center"><Book className="w-4 h-4 mr-2 opacity-70" /> API Reference</span>
                 <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
               </a>
-              <a href="/dashboard/playground" className="flex items-center justify-between text-[13px] text-neutral-400 hover:text-white transition-colors group">
-                <span className="flex items-center"><PlayCircle className="w-4 h-4 mr-2 opacity-70" /> Playground</span>
+              <a href="/dashboard/policies?test=true" className="flex items-center justify-between text-[13px] text-neutral-400 hover:text-white transition-colors group">
+                <span className="flex items-center"><PlayCircle className="w-4 h-4 mr-2 opacity-70" /> Test in Playground</span>
                 <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
               </a>
               <a href="/contact" className="flex items-center justify-between text-[13px] text-neutral-400 hover:text-white transition-colors group">
