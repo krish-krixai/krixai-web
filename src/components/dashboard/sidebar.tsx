@@ -12,7 +12,8 @@ import {
   BookOpen,
   MessageSquare,
   ArrowUpRight,
-  ArrowRight
+  ArrowRight,
+  ShieldAlert
 } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -28,6 +29,7 @@ export function Sidebar({ user }: { user?: { full_name: string; email: string } 
   const mainNav = [
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
     { name: "Detection Logs", href: "/dashboard/logs", icon: Shield },
+    { name: "Security Policies", href: "/dashboard/policies", icon: ShieldAlert },
     { name: "API Keys", href: "/dashboard/keys", icon: Key },
     { name: "Settings", href: "/dashboard/settings", icon: Settings },
     { name: "Usage & Billing", href: "/dashboard/usage", icon: BarChart3 },
