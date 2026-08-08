@@ -139,17 +139,7 @@ export function OnboardingClient() {
               </div>
 
               <div className="bg-[#0a0a0a] border border-white/[0.08] rounded-[24px] p-8 shadow-2xl space-y-6">
-                <div className="flex items-center space-x-6 pb-6 border-b border-white/[0.05]">
-                  <div className="w-16 h-16 bg-[#111] border border-white/[0.1] rounded-2xl flex items-center justify-center shadow-inner">
-                    <span className="text-[20px] font-black text-white">
-                      {workspaceName ? workspaceName.substring(0, 2).toUpperCase() : "WS"}
-                    </span>
-                  </div>
-                  <div>
-                    <h3 className="text-[14px] font-bold text-white mb-1">Workspace Logo</h3>
-                    <p className="text-[12px] text-neutral-500">Auto-generated from name.</p>
-                  </div>
-                </div>
+
 
                 <div>
                   <label className="block text-[12px] font-bold text-neutral-300 mb-2">Workspace Name</label>
