@@ -1,41 +1,33 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
+import { checkRateLimit } from '@/utils/rate-limit';
+const ENGINE_URL = process.env.KRIXAI_ENGINE_URL; // Railway URL
+const ENGINE_SECRET = process.env.ENGINE_SECRET_KEY;
 
-export async function POST(req: Request) {
+export async function POST(request: NextRequest) {
   try {
-    const { prompt } = await req.json();
+    const ip = request.headers.get('x-forwarded-for') ?? '127.0.0.1';
+    const rateLimitResponse = await checkRateLimit('scan', `scan:${ip}`);
+    if (rateLimitResponse) return rateLimitResponse;
 
-    if (!prompt) {
-      return NextResponse.json({ error: "Prompt is required" }, { status: 400 });
-    }
-
-    // Securely call the Python Engine
-    const engineUrl = process.env.KRIXAI_ENGINE_URL || "http://127.0.0.1:8000";
-    const apiKey = process.env.KRIXAI_ENGINE_API_KEY;
-
-    const response = await fetch(`${engineUrl}/internal/playground/scan`, {
-      method: "POST",
+    const body = await request.json();
+    
+    // Forward to Python engine
+    const response = await fetch(`${ENGINE_URL}/scan`, {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+        'X-Engine-Secret': ENGINE_SECRET || '', // Authenticate with engine
       },
-      body: JSON.stringify({
-        workspace_id: "wksp_test_123", // Hardcoded for now
-        text: prompt,
-        idempotency_key: crypto.randomUUID(),
-      }),
+      body: JSON.stringify(body),
     });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Python Engine Error:", errorText);
-      return NextResponse.json({ error: "Engine evaluation failed" }, { status: response.status });
-    }
-
+    
     const data = await response.json();
-    return NextResponse.json(data);
-
+    return NextResponse.json(data, { status: response.status });
   } catch (error) {
-    console.error("Scan API Error:", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    console.error('Scan API error:', error);
+    return NextResponse.json(
+      { error: 'Scan service unavailable' },
+      { status: 503 }
+    );
   }
 }

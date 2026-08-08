@@ -188,12 +188,12 @@ export function UsageClient() {
         {/* KPIs */}
         {used > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[
+            {([
               { label: "Scans This Period", value: used.toLocaleString(), trend: null },
               { label: "Avg Daily Usage", value: Math.round(used / Math.max(1, elapsedDays)).toLocaleString(), trend: null },
               { label: "Peak Usage Day", value: "---", desc: "Not enough historical data" },
               { label: "Avg Latency", value: "---", desc: "Awaiting logs" }
-            ].map((kpi, i) => (
+            ] as any[]).map((kpi, i) => (
               <div key={i} className="bg-[#050505] border border-white/10 rounded-sm p-5 flex flex-col justify-between h-[120px]">
                 <div className="text-neutral-500">{kpi.label}</div>
                 <div>

@@ -19,9 +19,9 @@ export const redis = (env.UPSTASH_REDIS_REST_URL && env.UPSTASH_REDIS_REST_TOKEN
 const limiters = {
   auth: new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(5, '1 m'), ephemeralCache: fallbackCache }),
   keys: new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(5, '1 m'), ephemeralCache: fallbackCache }),
-  order: new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(3, '1 m'), ephemeralCache: fallbackCache }),
+  order: new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(5, '1 m'), ephemeralCache: fallbackCache }),
   webhook: new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(20, '1 m'), ephemeralCache: fallbackCache }),
-  scan: new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(60, '1 m'), ephemeralCache: fallbackCache }),
+  scan: new Ratelimit({ redis, limiter: Ratelimit.slidingWindow(10, '1 m'), ephemeralCache: fallbackCache }),
 };
 
 export async function checkRateLimit(type: keyof typeof limiters, identifier: string) {

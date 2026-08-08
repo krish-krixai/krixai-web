@@ -28,7 +28,7 @@ export default function DashboardOverview() {
         const res = await fetch(`/api/logs?page=1&limit=50`);
         if (res.ok) {
           const logsData = await res.json();
-          setLogs(logsData.logs || []);
+          setLogs(logsData.data || []);
         }
       } catch(e) {
         console.error("Failed to fetch logs", e);
@@ -44,10 +44,10 @@ export default function DashboardOverview() {
 
   // Calculate real metrics from the logs
   const requestsScanned = logs.length;
-  const threatsBlocked = logs.filter(l => l.decision === "BLOCK").length;
-  const threatsFlagged = logs.filter(l => l.decision === "WARN").length;
-  const falsePositiveRate = requestsScanned > 0 ? ((logs.filter(l => l.attackCategory === "None" && l.decision !== "ALLOW").length / requestsScanned) * 100).toFixed(1) : "0.0";
-  const avgLatency = requestsScanned > 0 ? Math.round(logs.reduce((acc, curr) => acc + curr.latency, 0) / requestsScanned) : 0;
+  const threatsBlocked = logs.filter(l => l.status === "blocked").length;
+  const threatsFlagged = logs.filter(l => l.status === "flagged").length;
+  const falsePositiveRate = requestsScanned > 0 ? ((logs.filter(l => (l.category === "None" || !l.category) && l.status !== "passed").length / requestsScanned) * 100).toFixed(1) : "0.0";
+  const avgLatency = requestsScanned > 0 ? Math.round(logs.reduce((acc, curr) => acc + (curr.scan_time_ms || 0), 0) / requestsScanned) : 0;
 
   // Generate chart data based on real logs (binning by day is complex client-side without timestamps spanning days, so we render flat or empty for now if no historical data is processed)
   const chartData: number[] = [];
@@ -185,25 +185,25 @@ export default function DashboardOverview() {
                 <div className="w-12">
                   <span className={cn(
                     "w-2.5 h-2.5 rounded-full inline-block",
-                    log.decision === "BLOCK" ? "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]" :
-                    log.decision === "WARN" ? "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)]" :
+                    log.status === "blocked" ? "bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]" :
+                    log.status === "flagged" ? "bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)]" :
                     "bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]"
                   )} />
                 </div>
                 <div className="w-24 text-neutral-500">
-                  {new Date(log.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                  {new Date(log.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                 </div>
                 <div className={cn(
                   "flex-1 font-medium",
-                  log.decision === "BLOCK" ? "text-red-400" :
-                  log.decision === "WARN" ? "text-amber-400" :
+                  log.status === "blocked" ? "text-red-400" :
+                  log.status === "flagged" ? "text-amber-400" :
                   "text-neutral-300"
                 )}>
-                  {log.decision === "BLOCK" ? "Threat Blocked" : log.decision === "WARN" ? "Threat Flagged" : "Request Passed"}
-                  <span className="text-neutral-500 font-normal ml-2 hidden sm:inline">- {log.attackCategory || "No threat"}</span>
+                  {log.status === "blocked" ? "Threat Blocked" : log.status === "flagged" ? "Threat Flagged" : "Request Passed"}
+                  <span className="text-neutral-500 font-normal ml-2 hidden sm:inline">- {log.category || "No threat"}</span>
                 </div>
-                <div className="w-16 text-right text-neutral-300">{log.riskScore > 0 ? `${log.riskScore}%` : "—"}</div>
-                <div className="w-16 text-right text-neutral-500">{log.latency}ms</div>
+                <div className="w-16 text-right text-neutral-300">{log.confidence > 0 ? `${(log.confidence * 100).toFixed(1)}%` : "—"}</div>
+                <div className="w-16 text-right text-neutral-500">{log.scan_time_ms}ms</div>
               </div>
             ))}
 

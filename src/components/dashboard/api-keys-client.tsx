@@ -18,6 +18,8 @@ interface ApiKey {
   id: string;
   name: string;
   prefix: string;
+  suffix: string;
+  maskedKey: string;
   fullKeyMock: string;
   environment: Environment;
   created: string;
@@ -29,7 +31,6 @@ interface ApiKey {
 export function ApiKeysClient() {
   const [keys, setKeys] = useState<ApiKey[]>([]);
   const [isMounted, setIsMounted] = useState(false);
-  const [revealed, setRevealed] = useState<string | null>(null);
 
   // Modals
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -55,6 +56,8 @@ export function ApiKeysClient() {
             id: d.id,
             name: d.name,
             prefix: d.key_prefix,
+            suffix: d.key_suffix,
+            maskedKey: `${d.key_prefix}...${d.key_suffix}`,
             fullKeyMock: "", // Plaintext never returned
             environment: d.environment,
             created: new Date(d.created_at).toLocaleDateString(),
@@ -98,7 +101,9 @@ export function ApiKeysClient() {
         id: data.id,
         name: data.name,
         prefix: data.key_prefix,
-        fullKeyMock: data.plaintext_key,
+        suffix: data.key_suffix,
+        maskedKey: `${data.key_prefix}...${data.key_suffix}`,
+        fullKeyMock: data.raw_key,
         environment: data.environment,
         created: "Just now",
         lastUsed: "Never",
@@ -176,14 +181,11 @@ export function ApiKeysClient() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-white mb-2 font-mono tracking-wider">
-                       {revealed === key.id ? "kx-live-84b2c9a1d3f" : key.prefix}
+                       {key.maskedKey}
                     </div>
                     <div className="flex items-center gap-4 text-neutral-500 text-[11px]">
-                      <button onClick={() => handleCopy(key.id, key.prefix)} className="hover:text-white transition-colors">
+                      <button onClick={() => handleCopy(key.id, key.maskedKey)} className="hover:text-white transition-colors">
                          {copiedKeyId === key.id ? "[Copied]" : "[Copy]"}
-                      </button>
-                      <button onClick={() => setRevealed(revealed === key.id ? null : key.id)} className="hover:text-white transition-colors">
-                        [{revealed === key.id ? "Hide" : "Reveal"}]
                       </button>
                     </div>
                   </td>

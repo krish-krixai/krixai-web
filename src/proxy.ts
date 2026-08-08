@@ -24,8 +24,16 @@ const coarseLimiter = new Ratelimit({
   ephemeralCache: fallbackCache,
 });
 
+import { checkRateLimit } from './utils/rate-limit';
+
 export async function proxy(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for') ?? '127.0.0.1';
+  
+  // Auth rate limiting (5 req/min)
+  if (request.nextUrl.pathname.startsWith('/auth')) {
+    const rateLimitResponse = await checkRateLimit('auth', `auth:${ip}`);
+    if (rateLimitResponse) return rateLimitResponse;
+  }
   
   // Enforce 1MB payload limit
   const contentLength = request.headers.get('content-length');

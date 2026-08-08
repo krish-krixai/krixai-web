@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   CheckCircle2, Circle, Copy, Terminal, ExternalLink,
   Shield, Server, Key, AlertTriangle, Book, HelpCircle,
-  PlayCircle, RefreshCw, ChevronRight, ChevronDown, Check
+  PlayCircle, RefreshCw, ChevronRight, ChevronDown, Check, ArrowRight
 } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";

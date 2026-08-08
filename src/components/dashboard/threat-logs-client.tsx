@@ -24,24 +24,24 @@ export function ThreatLogsClient() {
     if (!activeWorkspace) return;
     setIsLoading(true);
     try {
-      const res = await fetch(`/api/logs?page=${currentPage}&limit=${rowsPerPage}`);
+      const res = await fetch(`/api/logs?page=${currentPage}&limit=${rowsPerPage}&workspace_id=${activeWorkspace.id}`);
       if (!res.ok) throw new Error("Failed to fetch logs");
       const data = await res.json();
       
-      // We map the backend real data to the terminal visual format
-      setLogs(data.logs.map((log: any) => ({
+      // Map the new backend schema to the visual format
+      setLogs(data.data?.map((log: any) => ({
         id: log.id,
-        status: log.decision === "BLOCK" ? "BLK" : log.decision === "WARN" ? "FLG" : "PAS",
-        time: new Date(log.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
-        fullTime: new Date(log.timestamp).toLocaleString(),
-        category: log.attackCategory || "None",
-        conf: `${log.riskScore}%`,
-        latency: `${log.latency}ms`,
-        sourceIp: "203.0.113.42", // Mock IP for detail
-        apiKey: log.provider,
-        subType: log.reason?.substring(0,20) + "...",
-        mode: log.decision === "BLOCK" ? "Blocking" : "Monitoring",
-        prompt: log.prompt
+        status: log.status === "blocked" ? "BLK" : log.status === "flagged" ? "FLG" : "PAS",
+        time: new Date(log.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+        fullTime: new Date(log.created_at).toLocaleString(),
+        category: log.category || "None",
+        conf: `${(log.confidence * 100).toFixed(1)}%`,
+        latency: `${log.scan_time_ms}ms`,
+        sourceIp: log.source_ip || "Unknown", 
+        apiKey: log.api_key_id ? "Provider Key" : "Unknown",
+        subType: log.sub_type || "Unknown",
+        mode: log.action_taken === "block" ? "Blocking" : "Monitoring",
+        prompt: log.metadata?.prompt || "Redacted"
       })) || []);
       setTotalLogs(data.total || 0);
     } catch (error) {

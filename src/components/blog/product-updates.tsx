@@ -2,7 +2,11 @@
 
 import React from "react";
 import { CheckCircle2 } from "lucide-react";
-import type { ProductUpdate } from "@/data/blog";
+export interface ProductUpdate {
+  version: string;
+  date: string;
+  features: string[];
+}
 
 export function ProductUpdates({ updates }: { updates: ProductUpdate[] }) {
   return (

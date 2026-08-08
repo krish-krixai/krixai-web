@@ -3,7 +3,12 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowRight, Shield, Terminal, Cpu, Zap, Code, Megaphone } from "lucide-react";
-import type { Topic } from "@/data/blog";
+export interface Topic {
+  title: string;
+  iconName: string;
+  articleCount: number;
+  description: string;
+}
 
 // Map string icon names to actual Lucide components
 const ICON_MAP: Record<string, React.ElementType> = {

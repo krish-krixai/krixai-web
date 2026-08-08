@@ -3,9 +3,9 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowRight, BookOpen } from "lucide-react";
-import type { Guide } from "@/data/blog";
+import type { Article } from "@/data/blog";
 
-export function PopularGuides({ guides }: { guides: Guide[] }) {
+export function PopularGuides({ guides }: { guides: Article[] }) {
   return (
     <section className="w-full bg-black py-24 relative">
       <div className="max-w-[85rem] mx-auto px-6 lg:px-12 relative z-10 flex flex-col lg:flex-row gap-16">
@@ -44,7 +44,7 @@ export function PopularGuides({ guides }: { guides: Guide[] }) {
                     {guide.title}
                   </h3>
                   <p className="text-neutral-400 text-[14px] leading-[1.6]">
-                    {guide.summary}
+                    {guide.excerpt}
                   </p>
                 </div>
                 
