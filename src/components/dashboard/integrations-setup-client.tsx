@@ -77,10 +77,10 @@ export function IntegrationsSetupClient() {
 
   const getCodeSnippet = () => {
     if (sdk === "Python") {
-      return `import krixai\nfrom openai import OpenAI\n\n# 1. Initialize krixai Client\nkrixai.api_key = "${apiKey === "krix_••••••••••••••••" ? "YOUR_KRIXAI_KEY" : apiKey}"\n\n# 2. Wrap your provider\nclient = krixai.wrap(OpenAI())\n\n# 3. Securely scan & route prompt\nresponse = client.chat.completions.create(\n    model="gpt-4",\n    messages=[{"role": "user", "content": "Hello!"}]\n)\n\nprint(response.choices[0].message)`;
+      return `# Install via: pip install krixai-detect==0.1\n\nimport krixai_detect\nfrom openai import OpenAI\n\n# 1. Initialize krixai Client\nkrixai_detect.api_key = "${apiKey === "krix_••••••••••••••••" ? "YOUR_KRIXAI_KEY" : apiKey}"\n\n# 2. Wrap your provider\nclient = krixai_detect.wrap(OpenAI())\n\n# 3. Securely scan & route prompt\nresponse = client.chat.completions.create(\n    model="gpt-4",\n    messages=[{"role": "user", "content": "Hello!"}]\n)\n\nprint(response.choices[0].message)`;
     }
     if (sdk === "TypeScript") {
-      return `import { krixai } from 'krixai';\nimport OpenAI from 'openai';\n\n// 1. Initialize krixai Client\nconst krixaiClient = new krixai('${apiKey === "krix_••••••••••••••••" ? "YOUR_KRIXAI_KEY" : apiKey}');\n\n// 2. Wrap your provider\nconst client = krixaiClient.wrap(new OpenAI());\n\n// 3. Securely scan & route prompt\nconst response = await client.chat.completions.create({\n    model: 'gpt-4',\n    messages: [{ role: 'user', content: 'Hello!' }]\n});\n\nconsole.log(response.choices[0].message);`;
+      return `// Install via: npm install krixai-detect@0.1\n\nimport { KrixaiDetect } from 'krixai-detect';\nimport OpenAI from 'openai';\n\n// 1. Initialize krixai Client\nconst krixai = new KrixaiDetect('${apiKey === "krix_••••••••••••••••" ? "YOUR_KRIXAI_KEY" : apiKey}');\n\n// 2. Wrap your provider\nconst client = krixai.wrap(new OpenAI());\n\n// 3. Securely scan & route prompt\nconst response = await client.chat.completions.create({\n    model: 'gpt-4',\n    messages: [{ role: 'user', content: 'Hello!' }]\n});\n\nconsole.log(response.choices[0].message);`;
     }
     return `curl -X POST https://api.krixaisecurity.com/v1/scan \\\n  -H "Authorization: Bearer ${apiKey === "krix_••••••••••••••••" ? "YOUR_KRIXAI_KEY" : apiKey}" \\\n  -H "Content-Type: application/json" \\\n  -d '{\n    "provider": "${provider.toLowerCase()}",\n    "prompt": "Hello!",\n    "route_if_safe": true\n  }'`;
   };
