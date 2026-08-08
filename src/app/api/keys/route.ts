@@ -2,13 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { resolveWorkspace } from "@/utils/workspace";
 import { z } from "zod";
 import { checkRateLimit } from "@/utils/rate-limit";
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from "@/utils/supabase/server";
 import crypto from "crypto";
-
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 export async function GET(req: NextRequest) {
   try {
@@ -28,7 +23,9 @@ export async function GET(req: NextRequest) {
     const rateLimitResponse = await checkRateLimit('keys', `keys:${workspaceId}:${userId}`);
     if (rateLimitResponse) return rateLimitResponse;
     
-    const { data, error } = await supabaseAdmin
+    const supabase = await createClient();
+    
+    const { data, error } = await supabase
       .from('api_keys')
       .select('*')
       .eq('workspace_id', workspaceId)
@@ -88,7 +85,9 @@ export async function POST(req: NextRequest) {
     const key_prefix = plaintextKey.substring(0, 12);
     const key_hash = crypto.createHash('sha256').update(plaintextKey).digest('hex');
 
-    const { data, error } = await supabaseAdmin.from('api_keys').insert({
+    const supabase = await createClient();
+
+    const { data, error } = await supabase.from('api_keys').insert({
       workspace_id: workspaceId,
       name: body.name,
       environment: body.environment,
