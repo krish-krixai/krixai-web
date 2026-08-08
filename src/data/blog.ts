@@ -272,6 +272,6 @@ client = openai.OpenAI(
   }
 ];
 
-export const TOPICS = [];
-export const POPULAR_GUIDES = [];
-export const PRODUCT_UPDATES = [];
+export const TOPICS: { title: string }[] = [];
+export const POPULAR_GUIDES: any[] = [];
+export const PRODUCT_UPDATES: any[] = [];
