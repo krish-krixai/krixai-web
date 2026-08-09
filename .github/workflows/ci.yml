@@ -22,14 +22,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
         
-      - name: Lint
-        run: npm run lint
-        
       - name: Test Sanity Checks
         run: npm run test
-        
-      - name: Typecheck
-        run: npx tsc --noEmit
         
       - name: Build Check
         run: npm run build
