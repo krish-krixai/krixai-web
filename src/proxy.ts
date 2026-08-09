@@ -31,8 +31,21 @@ export async function proxy(request: NextRequest) {
   
   // Auth rate limiting (5 req/min)
   if (request.nextUrl.pathname.startsWith('/auth')) {
-    const rateLimitResponse = await checkRateLimit('auth', `auth:${ip}`);
-    if (rateLimitResponse) return rateLimitResponse;
+    // Don't rate limit background prefetches, only actual navigations
+    const isPrefetch = request.headers.get('next-router-prefetch') === '1';
+    const isRsc = request.headers.get('rsc') === '1';
+    
+    if (!isPrefetch && !isRsc) {
+      const rateLimitResponse = await checkRateLimit('auth', `auth:${ip}`);
+      if (rateLimitResponse) {
+        // If it's a browser requesting HTML, we shouldn't return raw JSON. Redirect them or show plain text.
+        const accept = request.headers.get('accept') || '';
+        if (accept.includes('text/html')) {
+           return new NextResponse("429 - Too Many Requests. Please wait a minute before trying again.", { status: 429, headers: { 'Content-Type': 'text/plain' } });
+        }
+        return rateLimitResponse;
+      }
+    }
   }
   
   // Enforce 1MB payload limit
