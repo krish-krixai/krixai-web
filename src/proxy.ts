@@ -37,7 +37,7 @@ export async function proxy(request: NextRequest) {
     
     if (!isPrefetch && !isRsc) {
       // Better IP parsing for Vercel behind Cloudflare
-      const actualIp = request.ip ?? ip.split(',')[0].trim();
+      const actualIp = ip.split(',')[0].trim();
       const rateLimitResponse = await checkRateLimit('auth', `auth:${actualIp}`);
       if (rateLimitResponse) {
         const accept = request.headers.get('accept') || '';
