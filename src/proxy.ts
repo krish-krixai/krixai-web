@@ -30,15 +30,16 @@ export async function proxy(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for') ?? '127.0.0.1';
   
   // Auth rate limiting (5 req/min)
-  if (request.nextUrl.pathname.startsWith('/auth')) {
-    // Don't rate limit background prefetches, only actual navigations
+  // Only apply to POST requests to prevent blocking legitimate users from loading the UI pages
+  if (request.nextUrl.pathname.startsWith('/auth') && request.method === 'POST') {
     const isPrefetch = request.headers.get('next-router-prefetch') === '1';
     const isRsc = request.headers.get('rsc') === '1';
     
     if (!isPrefetch && !isRsc) {
-      const rateLimitResponse = await checkRateLimit('auth', `auth:${ip}`);
+      // Better IP parsing for Vercel behind Cloudflare
+      const actualIp = request.ip ?? ip.split(',')[0].trim();
+      const rateLimitResponse = await checkRateLimit('auth', `auth:${actualIp}`);
       if (rateLimitResponse) {
-        // If it's a browser requesting HTML, we shouldn't return raw JSON. Redirect them or show plain text.
         const accept = request.headers.get('accept') || '';
         if (accept.includes('text/html')) {
            return new NextResponse("429 - Too Many Requests. Please wait a minute before trying again.", { status: 429, headers: { 'Content-Type': 'text/plain' } });
