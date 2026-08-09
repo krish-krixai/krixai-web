@@ -295,7 +295,7 @@ export function PricingTable({ isCheckoutEnabled = false, isTestMode = false }: 
   };
 
   return (
-    <section className="relative w-full bg-black py-24 lg:py-32 overflow-hidden flex flex-col items-center">
+    <section className="relative w-full bg-black pb-24 lg:pb-32 overflow-hidden flex flex-col items-center">
       {isTestMode && (
         <div className="absolute top-0 left-0 right-0 w-full bg-amber-500/90 text-black py-1.5 text-center text-xs font-bold uppercase tracking-wider z-50 flex items-center justify-center">
           Test payments only
