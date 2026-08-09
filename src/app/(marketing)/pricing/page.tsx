@@ -28,7 +28,7 @@ export default function PricingPage() {
   ];
 
   return (
-    <main className="flex-1 w-full flex flex-col bg-black overflow-hidden pt-24 lg:pt-32">
+    <main className="flex-1 w-full flex flex-col bg-black overflow-hidden pt-16 lg:pt-20">
       <PricingTable 
         isCheckoutEnabled={isCheckoutEnabled}
         isTestMode={isTestMode}
