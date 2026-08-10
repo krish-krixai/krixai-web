@@ -102,7 +102,7 @@ export default function PromptInjectionPage() {
                 Indirect prompt injection is a significantly more dangerous variant because the attacker never interacts with the AI application directly. Instead, the malicious instructions are embedded in an external resource that the AI is expected to process.
               </p>
               <p>
-                For example, an attacker could hide an injection payload inside a website, a PDF document, or an email. When the victim asks their AI assistant to summarize the document, the AI ingests the poisoned text and executes the hidden commands against the victim. Learn more about <Link href="/blog/anatomy-of-indirect-prompt-injection" className="text-blue-400 hover:underline">how indirect prompt injection works</Link>.
+                For example, an attacker could hide an injection payload inside a website, a PDF document, or an email. When the victim asks their AI assistant to summarize the document, the AI ingests the poisoned text and executes the hidden commands against the victim. Learn more about <Link href="/indirect-prompt-injection" className="text-blue-400 hover:underline">how indirect prompt injection works</Link>, or read our deep-dive on the <Link href="/blog/anatomy-of-indirect-prompt-injection" className="text-blue-400 hover:underline">anatomy of indirect prompt injection</Link>.
               </p>
             </div>
           </section>
