@@ -208,7 +208,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
                   </h2>
                   <div className="flex flex-col gap-8 text-[16px] lg:text-[1.125rem] leading-[1.9] text-neutral-300 font-normal">
                     {section.content.map((paragraph, i) => (
-                      <p key={i} className="text-justify-none">{paragraph}</p>
+                      <p key={i} className="text-justify-none" dangerouslySetInnerHTML={{ __html: paragraph as string }} />
                     ))}
                   </div>
                 </div>
