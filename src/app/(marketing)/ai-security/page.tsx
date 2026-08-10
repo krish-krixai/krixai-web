@@ -107,7 +107,7 @@ export default function AiSecurityPage() {
             <h2 className="text-3xl font-medium text-white mb-6">4. Prompt Injection</h2>
             <div className="space-y-4 text-[17px] text-neutral-300 leading-relaxed">
               <p>
-                Prompt Injection is the most critical vulnerability in modern LLM applications (categorized as <a href="/research/owasp-llm-top-10-runtime-security-perspective" className="text-blue-400 hover:underline">LLM01 in the OWASP Top 10</a>). It occurs when untrusted input alters the intended behavior of the LLM.
+                <Link href="/prompt-injection" className="text-blue-400 hover:underline font-medium">Prompt Injection</Link> is the most critical vulnerability in modern LLM applications (categorized as <a href="/research/owasp-llm-top-10-runtime-security-perspective" className="text-blue-400 hover:underline">LLM01 in the OWASP Top 10</a>). It occurs when untrusted input alters the intended behavior of the LLM.
               </p>
               <p>
                 By appending malicious instructions to a legitimate request, an attacker can hijack the model to bypass developer constraints, impersonate the system, or execute unauthorized actions. You can read our deep dive on the <a href="/research/anatomy-of-a-prompt-injection-attack" className="text-blue-400 hover:underline">anatomy of a prompt injection attack</a> for technical examples.
@@ -146,10 +146,13 @@ export default function AiSecurityPage() {
             <h2 className="text-3xl font-medium text-white mb-6">7. RAG Security</h2>
             <div className="space-y-4 text-[17px] text-neutral-300 leading-relaxed">
               <p>
-                Retrieval-Augmented Generation (RAG) introduces severe security risks known as <Link href="/blog/anatomy-of-indirect-prompt-injection" className="text-blue-400 hover:underline">Indirect Prompt Injection</Link>. In this scenario, the attacker does not interact directly with the chat interface.
+                Retrieval-Augmented Generation (RAG) introduces severe security risks known as <Link href="/indirect-prompt-injection" className="text-blue-400 hover:underline font-medium">Indirect Prompt Injection</Link>. In this scenario, the attacker does not interact directly with the chat interface.
               </p>
               <p>
-                Instead, the attacker embeds malicious instructions inside a document, webpage, or database that the RAG pipeline is known to scrape. When the user asks a question, the application retrieves the poisoned document, and the LLM executes the hidden instructions against the user.
+                Instead, the attacker embeds malicious instructions inside a document, webpage, or database that the RAG pipeline is known to scrape. When the user asks a question, the application retrieves the poisoned document, and the LLM executes the hidden instructions against the user. To see how this works technically, read about the <Link href="/blog/anatomy-of-indirect-prompt-injection" className="text-blue-400 hover:underline">anatomy of indirect prompt injection</Link>.
+              </p>
+              <p>
+                Protecting these pipelines requires more than just stopping adversarial payloads. For a holistic view of access control, vector database isolation, and data privacy, read our complete guide to <Link href="/rag-security" className="text-blue-400 hover:underline font-medium">RAG Security</Link>.
               </p>
             </div>
           </section>
