@@ -6,11 +6,14 @@ import { HowItWorks } from "@/components/landing/how-it-works";
 import { Demo } from "@/components/landing/demo";
 import { BottomCta } from "@/components/landing/bottom-cta";
 
-export const metadata: Metadata = { 
+export const metadata: Metadata = {
   title: "Krixai - Enterprise AI Security Layer",
-  description: "Secure every AI request in milliseconds. Detect prompt injection, jailbreaks, and PII leakage before they reach your LLM.",
+  description: "Secure every AI request in milliseconds. Detect prompt injection, jailbreaks, and PII leakage before they reach your LLM. Prevent adversarial attacks on your generative AI applications.",
   alternates: {
     canonical: "/"
+  },
+  openGraph: {
+    url: "/"
   }
 };
 
