@@ -24,7 +24,6 @@ export const metadata: Metadata = {
   openGraph: {
     title: "krixai - Enterprise AI Security Layer",
     description: "Protect your AI applications against prompt injection and sensitive data leakage.",
-    url: "https://www.krixaisecurity.com",
     siteName: "krixai",
     type: "website",
   },
