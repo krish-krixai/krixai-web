@@ -1,5 +1,9 @@
 import { Metadata } from "next";
-export const metadata: Metadata = { title: "Pricing" };
+export const metadata: Metadata = { 
+  title: "Pricing",
+  description: "Compare Krixai pricing plans. Choose the right security layer for your AI product as you scale, with transparent pricing for startups to enterprises.",
+  alternates: { canonical: "/pricing" }
+};
 
 import { PricingTable } from "@/components/pricing-table";
 import { ComparisonTable } from "@/components/comparison-table";

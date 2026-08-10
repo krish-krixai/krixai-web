@@ -29,6 +29,17 @@ export async function generateStaticParams() {
   }));
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const article = ARTICLES.find((a) => a.slug === slug);
+  if (!article) return {};
+  return {
+    title: article.title,
+    description: article.excerpt,
+    alternates: { canonical: `/research/${slug}` }
+  };
+}
+
 export default async function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const article = ARTICLES.find((a) => a.slug === slug);
@@ -40,8 +51,43 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
   const category = getCategoryById(article.category);
   const catColor = category ? CATEGORY_COLOR[category.color] : "text-neutral-400";
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.krixaisecurity.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Research",
+        "item": "https://www.krixaisecurity.com/research"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": getCategoryName(article.category),
+        "item": `https://www.krixaisecurity.com/research/category/${article.category}`
+      },
+      {
+        "@type": "ListItem",
+        "position": 4,
+        "name": article.title,
+        "item": `https://www.krixaisecurity.com/research/${article.slug}`
+      }
+    ]
+  };
+
   return (
     <main className="flex-1 w-full flex flex-col bg-black relative selection:bg-white/20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <ReadingProgress />
 
       {/* Header - Obsidian Black */}

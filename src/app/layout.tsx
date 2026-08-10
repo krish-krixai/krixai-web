@@ -20,11 +20,11 @@ export const metadata: Metadata = {
     default: "krixai - Enterprise AI Security Layer",
   },
   description: "krixai protects your AI applications against prompt injection, sensitive data leakage, and adversarial attacks before requests ever reach your models.",
-  metadataBase: new URL("https://krixaisecurity.com"),
+  metadataBase: new URL("https://www.krixaisecurity.com"),
   openGraph: {
     title: "krixai - Enterprise AI Security Layer",
     description: "Protect your AI applications against prompt injection and sensitive data leakage.",
-    url: "https://krixaisecurity.com",
+    url: "https://www.krixaisecurity.com",
     siteName: "krixai",
     type: "website",
   },

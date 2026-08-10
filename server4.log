@@ -5,7 +5,7 @@
 ▲ Next.js 16.2.9
 - Local:         http://localhost:3000
 - Network:       http://192.168.1.5:3000
-✓ Ready in 84ms
+✓ Ready in 85ms
 [@sentry/nextjs] DEPRECATION WARNING: disableLogger is deprecated and will be removed in a future version. Use webpack.treeshake.removeDebugLogging instead.
 [@sentry/nextjs] DEPRECATION WARNING: reactComponentAnnotation is deprecated and will be removed in a future version. Use webpack.reactComponentAnnotation instead.
 ⚠ `eslint` configuration in next.config.ts is no longer supported. See more info here: https://nextjs.org/docs/app/api-reference/cli/next#next-lint-options

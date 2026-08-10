@@ -11,6 +11,17 @@ export async function generateStaticParams() {
   }));
 }
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const article = ARTICLES.find((a) => a.slug === slug);
+  if (!article) return {};
+  return {
+    title: article.title,
+    description: article.excerpt,
+    alternates: { canonical: `/blog/${slug}` }
+  };
+}
+
 export default async function BlogArticlePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const article = ARTICLES.find((a) => a.slug === slug);
@@ -25,8 +36,37 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
     "Product": "#10B981"
   };
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://www.krixaisecurity.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Blog",
+        "item": "https://www.krixaisecurity.com/blog"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": article.title,
+        "item": `https://www.krixaisecurity.com/blog/${article.slug}`
+      }
+    ]
+  };
+
   return (
     <div className="min-h-screen bg-[#000000] pt-32 pb-24 px-6">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <div className="max-w-[720px] mx-auto">
         
         {/* Back Link */}

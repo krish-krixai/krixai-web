@@ -1,0 +1,71 @@
+
+> krixai-web@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.9 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.1.5:3000
+- Environments: .env.local
+✓ Ready in 205ms
+[@sentry/nextjs] DEPRECATION WARNING: disableLogger is deprecated and will be removed in a future version. Use webpack.treeshake.removeDebugLogging instead. (Not supported with Turbopack.)
+[@sentry/nextjs] DEPRECATION WARNING: reactComponentAnnotation is deprecated and will be removed in a future version. Use webpack.reactComponentAnnotation instead. (Not supported with Turbopack.)
+⚠ `eslint` configuration in next.config.ts is no longer supported. See more info here: https://nextjs.org/docs/app/api-reference/cli/next#next-lint-options
+⚠ Invalid next.config.ts options detected: 
+⚠     Unrecognized key(s) in object: 'eslint'
+⚠ See more info here: https://nextjs.org/docs/messages/invalid-next-config
+- Experiments (use with caution):
+  · clientTraceMetadata
+
+⨯ ./src/app/globals.css
+Error evaluating Node.js code
+Error: Cannot find module '@tailwindcss/oxide'
+Require stack:
+- /Users/krish/Documents/krixai web/node_modules/@tailwindcss/postcss/dist/index.js
+- /Users/krish/Documents/krixai web/.next/dev/build/chunks/[root-of-the-server]__0oj80bi._.js
+- /Users/krish/Documents/krixai web/.next/dev/build/chunks/[turbopack]_runtime.js
+- /Users/krish/Documents/krixai web/.next/dev/build/56416d4ae4ce586f.js
+    [at Module._resolveFilename (node:internal/modules/cjs/loader:1476:15)]
+    [at wrapResolveFilename (node:internal/modules/cjs/loader:1049:27)]
+    [at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1073:10)]
+    [at defaultResolve (node:internal/modules/cjs/loader:1124:20)]
+    [at nextStep (node:internal/modules/customization_hooks:189:26)]
+    [at He (/Users/krish/Documents/krixai web/node_modules/@tailwindcss/node/dist/index.js:1:1283)]
+    [at nextStep (node:internal/modules/customization_hooks:189:26)]
+    [at resolveWithHooks (node:internal/modules/customization_hooks:417:10)]
+    [at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1137:25)]
+    [at Module._load (node:internal/modules/cjs/loader:1262:25)]
+
+Import trace:
+  Client Component Browser:
+    ./src/app/globals.css [Client Component Browser]
+    ./src/app/layout.tsx [Server Component]
+
+
+ HEAD / 500 in 246ms (next.js: 59ms, proxy.ts: 145ms, application-code: 42ms)
+⨯ ./src/app/globals.css
+Error evaluating Node.js code
+Error: Cannot find module '@tailwindcss/oxide'
+Require stack:
+- /Users/krish/Documents/krixai web/node_modules/@tailwindcss/postcss/dist/index.js
+- /Users/krish/Documents/krixai web/.next/dev/build/chunks/[root-of-the-server]__0oj80bi._.js
+- /Users/krish/Documents/krixai web/.next/dev/build/chunks/[turbopack]_runtime.js
+- /Users/krish/Documents/krixai web/.next/dev/build/56416d4ae4ce586f.js
+    [at Module._resolveFilename (node:internal/modules/cjs/loader:1476:15)]
+    [at wrapResolveFilename (node:internal/modules/cjs/loader:1049:27)]
+    [at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1073:10)]
+    [at defaultResolve (node:internal/modules/cjs/loader:1124:20)]
+    [at nextStep (node:internal/modules/customization_hooks:189:26)]
+    [at He (/Users/krish/Documents/krixai web/node_modules/@tailwindcss/node/dist/index.js:1:1283)]
+    [at nextStep (node:internal/modules/customization_hooks:189:26)]
+    [at resolveWithHooks (node:internal/modules/customization_hooks:417:10)]
+    [at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1137:25)]
+    [at Module._load (node:internal/modules/cjs/loader:1262:25)]
+
+Import trace:
+  Client Component Browser:
+    ./src/app/globals.css [Client Component Browser]
+    ./src/app/layout.tsx [Server Component]
+
+
+ HEAD / 500 in 7ms (next.js: 2ms, proxy.ts: 1921µs, application-code: 3ms)
+[?25h
