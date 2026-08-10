@@ -120,7 +120,7 @@ export default async function BlogArticlePage({ params }: { params: Promise<{ sl
               
               <div className="space-y-6 text-[#94A3B8] text-[18px] leading-[1.8] font-sans font-normal">
                 {section.content.map((paragraph, pIdx) => (
-                  <p key={pIdx}>{paragraph}</p>
+                  <p key={pIdx} dangerouslySetInnerHTML={{ __html: paragraph as string }} />
                 ))}
               </div>
 
