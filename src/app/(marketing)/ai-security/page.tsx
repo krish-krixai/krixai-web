@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { BottomCta } from "@/components/landing/bottom-cta";
-import { Shield, Brain, Lock, Target, Code, Database, Search, Zap, CheckCircle2, ChevronRight, Server, Wrench, ShieldAlert, Cpu } from "lucide-react";
+import { Shield, Brain, Lock, Target, Code, Database, Search, Zap, CheckCircle2, ChevronRight, Server, Wrench, ShieldAlert, Cpu, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 
 export const metadata: Metadata = {
