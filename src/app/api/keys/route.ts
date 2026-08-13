@@ -54,30 +54,27 @@ const createKeySchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
-  const supabase = await createClient();
-  const { data: { user }, error: authError } = await supabase.auth.getUser();
-  
-  if (!user || authError) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  try {
+    let workspace_id: string;
+    let userId: string;
+    try {
+      const resolved = await resolveWorkspace(request, 'OWNER');
+      workspace_id = resolved.workspaceId;
+      userId = resolved.user?.id || 'unknown';
+    } catch (authError: any) {
+      if (authError.message === "Unauthorized") {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+      return NextResponse.json({ error: authError.message }, { status: 403 });
+    }
 
-  const rateLimitResponse = await checkRateLimit('keys', `keys_post:${user.id}`);
-  if (rateLimitResponse) return rateLimitResponse;
-  
-  const body = await request.json();
-  const { workspace_id, name, environment } = body;
+    const rateLimitResponse = await checkRateLimit('keys', `keys_post:${userId}`);
+    if (rateLimitResponse) return rateLimitResponse;
+    
+    const body = await request.json();
+    const { name, environment } = body;
 
-  // Workspace ownership check
-  const { data: membership } = await supabase
-    .from('workspace_members')
-    .select('role')
-    .eq('workspace_id', workspace_id)
-    .eq('user_id', user.id)
-    .single();
-
-  if (!membership || membership.role !== 'OWNER') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-  }
+    const supabase = await createClient();
   
   // Check key limit for plan
   const { data: workspace } = await supabase
@@ -129,4 +126,8 @@ export async function POST(request: NextRequest) {
     ...data,
     raw_key: rawKey, // Only shown once, never retrievable again
   });
+  } catch (error: any) {
+    console.error("API Error in /keys POST:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
 }
