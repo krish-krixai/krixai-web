@@ -56,8 +56,8 @@ export function ApiKeysClient() {
             id: d.id,
             name: d.name,
             prefix: d.key_prefix,
-            suffix: d.key_suffix,
-            maskedKey: `${d.key_prefix}...${d.key_suffix}`,
+            suffix: "",
+            maskedKey: `${d.key_prefix}...................`,
             fullKeyMock: "", // Plaintext never returned
             environment: d.environment,
             created: new Date(d.created_at).toLocaleDateString(),
@@ -90,7 +90,12 @@ export function ApiKeysClient() {
       });
 
       if (!res.ok) {
-        alert("Failed to create API key");
+        let errMsg = "Failed to create API key";
+        try {
+          const errData = await res.json();
+          if (errData.error) errMsg += `: ${errData.error}`;
+        } catch (e) {}
+        alert(errMsg);
         return;
       }
 
@@ -101,8 +106,8 @@ export function ApiKeysClient() {
         id: data.id,
         name: data.name,
         prefix: data.key_prefix,
-        suffix: data.key_suffix,
-        maskedKey: `${data.key_prefix}...${data.key_suffix}`,
+        suffix: "",
+        maskedKey: `${data.key_prefix}...................`,
         fullKeyMock: data.raw_key,
         environment: data.environment,
         created: "Just now",

@@ -110,9 +110,9 @@ export async function POST(request: NextRequest) {
       workspace_id,
       key_hash: keyHash,
       key_prefix: keyPrefix,
-      key_suffix: keySuffix,
       name: name || 'Default Key',
-      environment: environment || 'production',
+      environment: environment || 'Production',
+      scopes: body.scopes || ['Scan']
     })
     .select()
     .single();
