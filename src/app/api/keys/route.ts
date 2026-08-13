@@ -124,7 +124,12 @@ export async function POST(request: NextRequest) {
     .single();
     
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    const keyHint = process.env.SUPABASE_SERVICE_ROLE_KEY 
+      ? `${process.env.SUPABASE_SERVICE_ROLE_KEY.substring(0, 15)}...` 
+      : 'missing';
+    return NextResponse.json({ 
+      error: `DB Error: ${error.message} (Key hint: ${keyHint})` 
+    }, { status: 500 });
   }
   
   // Return the raw key ONCE - it's never stored in plaintext
