@@ -104,7 +104,13 @@ export async function POST(request: NextRequest) {
   const keyPrefix = rawKey.substring(0, 8);
   const keySuffix = rawKey.substring(rawKey.length - 4);
   
-  const { data, error } = await supabase
+  const { createClient: createAdminClient } = await import('@supabase/supabase-js');
+  const supabaseAdmin = createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  const { data, error } = await supabaseAdmin
     .from('api_keys')
     .insert({
       workspace_id,
