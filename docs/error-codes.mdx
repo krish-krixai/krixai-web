@@ -10,7 +10,7 @@ When Krixai returns an error, the response body will contain a JSON object with 
 | HTTP Code | Error Code | Meaning | What to Do |
 |---|---|---|---|
 | `400` | `invalid_request` | Malformed request body | Check your JSON payload |
-| `401` | `invalid_krixai_key` | Missing or invalid `X-Krixai-Key` | Check your Krixai API key |
+| `401` | `invalid_krixai_key` | Missing or invalid `X-Krixai-API-Key` | Check your Krixai API key |
 | `401` | `invalid_llm_key` | LLM provider rejected your API key | Check your OpenAI/Anthropic key |
 | `403` | `prompt_injection_detected` | Krixai blocked a prompt injection | Handle gracefully in your app |
 | `403` | `jailbreak_detected` | Krixai blocked a jailbreak attempt | Handle gracefully in your app |

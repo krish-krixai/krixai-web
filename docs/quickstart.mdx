@@ -20,7 +20,7 @@ import openai
 client = openai.OpenAI(
     api_key="sk-your-openai-key",
     base_url="https://api.krixaisecurity.com/v1",
-    default_headers={"X-Krixai-Key": "kx-live-your-krixai-key"}
+    default_headers={"X-Krixai-API-Key": "kx-live-your-krixai-key"}
 )
 
 response = client.chat.completions.create(
@@ -37,7 +37,7 @@ import OpenAI from 'openai';
 const client = new OpenAI({
   apiKey: 'sk-your-openai-key',
   baseURL: 'https://api.krixaisecurity.com/v1',
-  defaultHeaders: { 'X-Krixai-Key': 'kx-live-your-krixai-key' }
+  defaultHeaders: { 'X-Krixai-API-Key': 'kx-live-your-krixai-key' }
 });
 
 const response = await client.chat.completions.create({
@@ -51,7 +51,7 @@ console.log(response.choices[0].message.content);
 ```bash cURL
 curl https://api.krixaisecurity.com/v1/chat/completions \
   -H "Authorization: Bearer sk-your-openai-key" \
-  -H "X-Krixai-Key: kx-live-your-krixai-key" \
+  -H "X-Krixai-API-Key: kx-live-your-krixai-key" \
   -H "Content-Type: application/json" \
   -d '{
     "model": "gpt-4o",

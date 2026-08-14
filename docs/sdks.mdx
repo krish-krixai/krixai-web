@@ -14,7 +14,7 @@ llm = ChatOpenAI(
     model="gpt-4o",
     api_key="sk-...",
     base_url="https://api.krixaisecurity.com/v1",
-    default_headers={"X-Krixai-Key": "kx-live-..."}
+    default_headers={"X-Krixai-API-Key": "kx-live-..."}
 )
 
 # All LangChain chains now route through Krixai automatically
@@ -30,7 +30,7 @@ llm = OpenAI(
     model="gpt-4o",
     api_key="sk-...",
     api_base="https://api.krixaisecurity.com/v1",
-    default_headers={"X-Krixai-Key": "kx-live-..."}
+    default_headers={"X-Krixai-API-Key": "kx-live-..."}
 )
 ```
 
