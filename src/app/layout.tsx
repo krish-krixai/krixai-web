@@ -16,20 +16,20 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | krixai",
-    default: "krixai - Enterprise AI Security Layer",
+    template: "%s — Krixai",
+    default: "Krixai — AI Security in 2 Lines of Code",
   },
   description: "krixai protects your AI applications against prompt injection, sensitive data leakage, and adversarial attacks before requests ever reach your models.",
   metadataBase: new URL("https://www.krixaisecurity.com"),
   openGraph: {
-    title: "krixai - Enterprise AI Security Layer",
+    title: "Krixai — AI Security in 2 Lines of Code",
     description: "Protect your AI applications against prompt injection and sensitive data leakage.",
     siteName: "krixai",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "krixai - Enterprise AI Security Layer",
+    title: "Krixai — AI Security in 2 Lines of Code",
     description: "Protect your AI applications against prompt injection and sensitive data leakage.",
   },
 };

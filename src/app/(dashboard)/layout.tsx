@@ -3,6 +3,7 @@ import { Sidebar } from "@/components/dashboard/sidebar";
 import { TopNav } from "@/components/dashboard/topnav";
 import { WorkspaceProvider, WorkspaceMembership } from "@/components/providers/workspace-provider";
 import { AnalyticsProvider } from "@/components/providers/analytics-provider";
+import { ProgressProvider } from "@/components/providers/progress-provider";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
@@ -57,15 +58,17 @@ export default async function DashboardLayout({
       initialActiveWorkspaceId={activeWorkspaceId}
     >
       <AnalyticsProvider>
-        <div className="flex h-screen overflow-hidden bg-black text-white">
-          <Sidebar user={{ full_name: user.user_metadata?.full_name, email: user.email || "" }} />
-          <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
-            <TopNav />
-            <main className="flex-1 overflow-y-auto bg-black pb-12">
-              {children}
-            </main>
+        <ProgressProvider>
+          <div className="flex h-screen overflow-hidden bg-black text-white">
+            <Sidebar user={{ full_name: user.user_metadata?.full_name, email: user.email || "" }} />
+            <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+              <TopNav />
+              <main className="flex-1 overflow-y-auto bg-black pb-12">
+                {children}
+              </main>
+            </div>
           </div>
-        </div>
+        </ProgressProvider>
       </AnalyticsProvider>
     </WorkspaceProvider>
   );

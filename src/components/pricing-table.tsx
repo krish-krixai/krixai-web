@@ -42,7 +42,7 @@ const PRICING_PLANS = [
     interval: "/month",
     priceInrDisplay: "₹4,100",
     tagline: "For teams launching AI in production",
-    description: "Everything you need to go from shadow mode to full production blocking. Output scanning, auto-redaction, and 30-day audit logs included.",
+    description: "Everything you need to go from shadow mode to full production blocking. 30-day audit logs included.",
     belowPrice: "Includes 100k requests. Then $0.002/request.",
     amountUsd: 4900,
     amountInr: 410000,
@@ -55,7 +55,7 @@ const PRICING_PLANS = [
       "48h email support"
     ],
     cta: "Start 14-Day Free Trial",
-    ctaAction: "checkout",
+    ctaAction: "signup",
     style: "ghost-cyan",
     highlighted: false,
     comingSoon: false
@@ -67,20 +67,20 @@ const PRICING_PLANS = [
     interval: "/month",
     priceInrDisplay: "₹16,500",
     tagline: "For teams scaling AI across products",
-    description: "Unlimited custom rules, webhook alerts, 90-day audit trail, and priority support. Built for DevSecOps teams that need full visibility and control.",
+    description: "Unlimited custom rules, 90-day audit trail, and priority support. Built for DevSecOps teams that need full visibility and control.",
     belowPrice: "Includes 1M requests. Then $0.001/request.",
     amountUsd: 19900,
     amountInr: 1650000,
     features: [
       "1,000,000 requests /mo",
       "Unlimited custom rules",
-      "Analytics & custom dashboards",
+      "Real-time dashboard",
       "90-day log retention",
       "10 environments & 10 seats",
       "12h priority support"
     ],
     cta: "Start 14-Day Free Trial",
-    ctaAction: "checkout",
+    ctaAction: "signup",
     style: "primary-glow",
     highlighted: true,
     comingSoon: false

@@ -3,7 +3,7 @@ import { AuthLayout } from "@/components/auth/auth-layout";
 import { Mail, ArrowLeft } from "lucide-react";
 
 export const metadata = {
-  title: "Email Sent | krixai",
+  title: "Email Sent",
 };
 
 export default function EmailSentPage() {

@@ -3,7 +3,7 @@ import React from "react";
 import { UsageClient } from "@/components/dashboard/usage-client";
 
 export const metadata = {
-  title: "Usage | krixai",
+  title: "Usage",
   description: "Track prompt scans, usage trends and plan consumption across your AI infrastructure.",
 };
 

@@ -15,7 +15,6 @@ const COMPARISON_CATEGORIES = [
       { name: "Prompt Injection (indirect/RAG)", free: true, starter: true, pro: true, enterprise: true },
       { name: "Jailbreak Detection", free: true, starter: true, pro: true, enterprise: true },
       { name: "PII Scanning (input)", free: true, starter: true, pro: true, enterprise: true },
-      { name: "PII Scanning (output)", free: false, starter: true, pro: true, enterprise: true },
       { name: "Custom Detection Rules", free: "3 rules", starter: "25 rules", pro: "Unlimited", enterprise: "Unlimited" },
     ]
   },
@@ -24,10 +23,7 @@ const COMPARISON_CATEGORIES = [
     features: [
       { name: "Shadow Mode", free: true, starter: true, pro: true, enterprise: true },
       { name: "Blocking Mode", free: true, starter: true, pro: true, enterprise: true },
-      { name: "Advisory Mode (headers only)", free: false, starter: true, pro: true, enterprise: true },
       { name: "Sensitivity Configuration", free: "Default only", starter: "3 levels", pro: "4 levels + custom", enterprise: "Fully custom" },
-      { name: "PII Auto-Redaction", free: false, starter: true, pro: true, enterprise: true },
-      { name: "Allow/Block Lists", free: false, starter: true, pro: true, enterprise: true },
     ]
   },
   {
@@ -35,7 +31,6 @@ const COMPARISON_CATEGORIES = [
     features: [
       { name: "Real-Time Dashboard", free: "Basic", starter: "Full", pro: "Full + Analytics", enterprise: "Full + Custom" },
       { name: "Detection Log Retention", free: "3 days", starter: "30 days", pro: "90 days", enterprise: "1 year + export" },
-      { name: "Webhook Alerts", free: false, starter: false, pro: true, enterprise: true },
       { name: "API for Log Export", free: false, starter: false, pro: true, enterprise: true },
     ]
   },

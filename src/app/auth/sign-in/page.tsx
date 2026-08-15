@@ -2,7 +2,7 @@ import React from "react";
 import { SignInClient } from "@/components/auth/sign-in-client";
 
 export const metadata = {
-  title: "Sign In | krixai",
+  title: "Sign In",
   description: "Sign in to your krixai workspace.",
 };
 

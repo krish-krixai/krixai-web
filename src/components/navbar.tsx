@@ -37,7 +37,6 @@ export function Navbar() {
     { href: "https://docs.krixaisecurity.com", label: "Docs" },
     { href: "/playground", label: "Playground" },
     { href: "/pricing", label: "Pricing" },
-    { href: "/blog", label: "Blog" },
   ];
 
   return (
@@ -66,9 +65,7 @@ export function Navbar() {
             </Link>
           ))}
           <div className="flex items-center space-x-6 ml-2">
-            {isAuthenticated === null ? (
-               <div className="w-24 h-9 animate-pulse bg-neutral-800 rounded-lg" />
-            ) : isAuthenticated ? (
+            {isAuthenticated ? (
               <Link 
                 href="/dashboard" 
                 className="text-[14px] font-semibold bg-[#FFFFFF] text-[#000000] px-[20px] py-[8px] rounded-[10px] hover:brightness-110 transition-all shadow-[0_0_0_1px_rgba(255,255,255,0.05)] hover:shadow-[0_0_0_1px_rgba(255,255,255,0.05)]"
@@ -130,9 +127,7 @@ export function Navbar() {
             </div>
 
             <div className="mt-8 flex flex-col space-y-3">
-              {isAuthenticated === null ? (
-                <div className="w-full h-12 animate-pulse bg-neutral-800 rounded-xl" />
-              ) : isAuthenticated ? (
+              {isAuthenticated ? (
                 <Link 
                   href="/dashboard" 
                   onClick={() => setIsMobileMenuOpen(false)}

@@ -4,7 +4,7 @@ import { Shield, Brain, Lock, Target, Code, Database, Search, Zap, CheckCircle2,
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Indirect Prompt Injection: Complete Guide to AI Security | Krixai",
+  title: "Indirect Prompt Injection: Complete Guide to AI Security",
   description: "Learn how indirect prompt injection attacks exploit webpages, documents, RAG data, and AI agents—and how to detect and defend against malicious instructions in untrusted content.",
   alternates: {
     canonical: "/indirect-prompt-injection"

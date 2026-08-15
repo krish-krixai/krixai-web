@@ -4,7 +4,7 @@ import { Shield, Brain, Lock, Target, Code, Database, Search, Zap, CheckCircle2,
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Prompt Injection: The Complete Guide to LLM Security | Krixai",
+  title: "Prompt Injection: The Complete Guide to LLM Security",
   description: "Learn how prompt injection attacks target LLM applications, RAG systems, and AI agents—and how developers can detect, prevent, and defend against them.",
   alternates: {
     canonical: "/prompt-injection"

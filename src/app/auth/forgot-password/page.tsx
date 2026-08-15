@@ -2,7 +2,7 @@ import React from "react";
 import { ForgotPasswordClient } from "@/components/auth/forgot-password-client";
 
 export const metadata = {
-  title: "Forgot Password | krixai",
+  title: "Forgot Password",
   description: "Reset your krixai password.",
 };
 

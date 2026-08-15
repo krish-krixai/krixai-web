@@ -3,7 +3,7 @@ import { AppContainer } from "@/components/layout/app-container";
 import { ApiKeysClient } from "@/components/dashboard/api-keys-client";
 
 export const metadata = {
-  title: "API Keys | krixai",
+  title: "API Keys",
   description: "Manage API credentials for securely integrating krixai into your applications.",
 };
 

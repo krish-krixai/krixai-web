@@ -2,7 +2,7 @@ import React from "react";
 import { OnboardingClient } from "@/components/onboarding/onboarding-client";
 
 export const metadata = {
-  title: "Onboarding | krixai",
+  title: "Onboarding",
   description: "Set up your workspace and secure your AI infrastructure.",
 };
 

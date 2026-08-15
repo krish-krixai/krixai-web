@@ -2,7 +2,7 @@ import React from "react";
 import { ResetPasswordClient } from "@/components/auth/reset-password-client";
 
 export const metadata = {
-  title: "Reset Password | krixai",
+  title: "Reset Password",
   description: "Update your krixai password.",
 };
 

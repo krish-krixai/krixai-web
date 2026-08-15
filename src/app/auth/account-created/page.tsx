@@ -3,7 +3,7 @@ import { AuthLayout } from "@/components/auth/auth-layout";
 import { CheckCircle2, ArrowRight } from "lucide-react";
 
 export const metadata = {
-  title: "Account Created | krixai",
+  title: "Account Created",
 };
 
 export default function AccountCreatedPage() {

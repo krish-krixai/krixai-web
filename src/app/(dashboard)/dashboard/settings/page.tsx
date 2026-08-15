@@ -3,7 +3,7 @@ import React from "react";
 import { SettingsClient } from "@/components/dashboard/settings-client";
 
 export const metadata = {
-  title: "Settings | krixai",
+  title: "Settings",
   description: "Manage your workspace, members, security and integrations.",
 };
 

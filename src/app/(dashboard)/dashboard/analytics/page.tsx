@@ -3,7 +3,7 @@ import React from "react";
 import { AnalyticsClient } from "@/components/dashboard/analytics-client";
 
 export const metadata = {
-  title: "Analytics | krixai",
+  title: "Analytics",
   description: "Monitor trends, threats and the security posture of your AI infrastructure.",
 };
 

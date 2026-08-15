@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { PlaygroundClient } from "@/components/playground/playground-client";
 
 export const metadata: Metadata = {
-  title: "Playground | Krixai",
+  title: "Playground",
   description: "Test the Krixai AI security engine live in your browser.",
 };
 

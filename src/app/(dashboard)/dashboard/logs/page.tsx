@@ -3,7 +3,7 @@ import React from "react";
 import { ThreatLogsClient } from "@/components/dashboard/threat-logs-client";
 
 export const metadata = {
-  title: "Threat Logs | krixai",
+  title: "Threat Logs",
   description: "Investigate AI security events and detected threats.",
 };
 

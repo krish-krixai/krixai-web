@@ -3,7 +3,7 @@ import React from "react";
 import { IntegrationsSetupClient } from "@/components/dashboard/integrations-setup-client";
 
 export const metadata = {
-  title: "Integrate | krixai",
+  title: "Integrate",
   description: "Connect your AI application in just a few guided steps.",
 };
 

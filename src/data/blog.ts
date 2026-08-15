@@ -24,7 +24,7 @@ export const ARTICLES: Article[] = [
   {
     slug: "anatomy-of-indirect-prompt-injection",
     title: "The Anatomy of Indirect Prompt Injection: How RAG Pipelines Become Attack Vectors",
-    excerpt: "We analyzed 50,000 real-world AI requests and found that 1 in 200 RAG-retrieved documents contain hidden adversarial instructions.",
+    excerpt: "Indirect prompt injection lets attackers hide instructions inside your RAG documents. Here's how it works and how to detect it.",
     author: "Security Research",
     publishDate: "Aug 2026",
     readingTime: "8 min read",

@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import { VerifyEmailClient } from "@/components/auth/verify-email-client";
 
 export const metadata = {
-  title: "Verify Email | krixai",
+  title: "Verify Email",
 };
 
 export default function VerifyEmailPage() {

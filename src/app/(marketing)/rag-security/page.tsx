@@ -4,7 +4,7 @@ import { Shield, Brain, Lock, Target, Code, Database, Search, Zap, CheckCircle2,
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "RAG Security: Complete Guide to Securing Retrieval-Augmented Generation | Krixai",
+  title: "RAG Security: Complete Guide to Securing Retrieval-Augmented Generation",
   description: "Learn how to secure RAG applications against prompt injection, data poisoning, unauthorized retrieval, PII leakage, vector database risks, and other AI security threats.",
   alternates: {
     canonical: "/rag-security"

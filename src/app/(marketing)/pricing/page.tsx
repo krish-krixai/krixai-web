@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 export const metadata: Metadata = { 
-  title: "Pricing | krixai",
+  title: "Pricing",
   description: "Compare Krixai pricing plans. Choose the right security layer for your AI product as you scale, with transparent pricing for startups to enterprises.",
   alternates: { canonical: "/pricing" },
   openGraph: { url: "/pricing" }

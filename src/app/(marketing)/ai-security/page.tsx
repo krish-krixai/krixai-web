@@ -4,7 +4,7 @@ import { Shield, Brain, Lock, Target, Code, Database, Search, Zap, CheckCircle2,
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "AI Security: Protect LLMs & AI Applications | Krixai",
+  title: "AI Security: Protect LLMs & AI Applications",
   description: "Learn how AI security protects LLM applications and AI agents from prompt injection, jailbreaks, data leakage, RAG attacks, and emerging AI threats.",
   alternates: {
     canonical: "/ai-security"

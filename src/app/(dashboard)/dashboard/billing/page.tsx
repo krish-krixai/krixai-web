@@ -3,7 +3,7 @@ import React from "react";
 import { BillingClient } from "@/components/dashboard/billing-client";
 
 export const metadata = {
-  title: "Billing | krixai",
+  title: "Billing",
   description: "Manage your subscription, payment methods and invoices.",
 };
 

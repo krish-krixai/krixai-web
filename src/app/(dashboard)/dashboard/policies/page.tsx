@@ -3,7 +3,7 @@ import React from "react";
 import { PoliciesClient } from "@/components/dashboard/policies-client";
 
 export const metadata = {
-  title: "Policies | krixai",
+  title: "Policies",
   description: "Define how krixai evaluates, blocks and allows AI requests across your organization.",
 };
 
