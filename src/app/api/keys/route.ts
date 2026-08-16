@@ -77,14 +77,14 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient();
   
   // Check key limit for plan
-  const { data: workspace } = await supabase
-    .from('workspaces')
-    .select('plan')
-    .eq('id', workspace_id)
+  const { data: sub } = await supabase
+    .from('workspace_subscriptions')
+    .select('plan_name')
+    .eq('workspace_id', workspace_id)
     .single();
     
-  const limits = { free: 1, starter: 3, pro: 10 };
-  const limit = limits[workspace?.plan as keyof typeof limits] || 1;
+  const limits: Record<string, number> = { starter: 1, free: 1, pro: 5, enterprise: 100 };
+  const limit = limits[sub?.plan_name?.toLowerCase() || 'free'] || 1;
   
   const { count } = await supabase
     .from('api_keys')
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
     
   if ((count || 0) >= limit) {
     return NextResponse.json(
-      { error: `Key limit reached for ${workspace?.plan} plan` },
+      { error: `Key limit reached for ${sub?.plan_name || 'Free'} plan` },
       { status: 403 }
     );
   }

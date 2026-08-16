@@ -58,7 +58,7 @@ export function UsageClient() {
   }
 
   // Current Plan Real Data
-  const monthlyLimit = subscription?.included_scans || 50000;
+  const monthlyLimit = subscription?.included_scans || 10000;
   const used = subscription?.scans_used || 0;
   const remaining = Math.max(0, monthlyLimit - used);
   const usagePercentage = Math.min(100, (used / monthlyLimit) * 100);
