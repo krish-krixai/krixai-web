@@ -45,35 +45,25 @@ export async function POST(req: NextRequest) {
     }
 
     // Determine limits based on plan
-    const limits = { starter: 10000, pro: 100000, enterprise: 1000000 };
-    const requestLimit = limits[plan_name as keyof typeof limits] || 1000;
+    const limits: Record<string, number> = { starter: 50000, free: 10000, pro: 500000, enterprise: 10000000 };
+    const requestLimit = limits[plan_name.toLowerCase()] || 50000;
 
-    // 2 & 4. Update the workspace plan and monthly_request_limit in Supabase
-    const { error: workspaceError } = await supabase
-      .from('workspaces')
-      .update({ 
-        plan: plan_name,
-        monthly_request_limit: requestLimit 
-      })
-      .eq('id', workspace_id);
+    // 2. Call RPC to atomically update order and subscription
+    const { data: rpcData, error: rpcError } = await supabase.rpc('confirm_razorpay_payment', {
+      p_razorpay_order_id: razorpay_order_id,
+      p_razorpay_payment_id: razorpay_payment_id,
+      p_razorpay_signature: razorpay_signature,
+      p_scans_to_add: requestLimit
+    });
 
-    if (workspaceError) throw workspaceError;
-
-    // 3. Update the subscription record
-    const { error: subError } = await supabase
-      .from('subscriptions')
-      .upsert({
-        workspace_id,
-        plan: plan_name,
-        status: 'active',
-        payment_provider: 'razorpay',
-        provider_subscription_id: razorpay_payment_id,
-      });
-
-    if (subError) throw subError;
-
-    // Optional: update the razorpay_orders table status to PAID
-    await supabase.from('razorpay_orders').update({ status: 'PAID' }).eq('razorpay_order_id', razorpay_order_id);
+    if (rpcError) {
+      console.error("RPC Error:", rpcError);
+      throw rpcError;
+    }
+    
+    if (!rpcData) {
+      return NextResponse.json({ error: "Order not found or already processed" }, { status: 400 });
+    }
 
     return NextResponse.json({ success: true, message: "Payment verified and workspace updated" }, { status: 200 });
   } catch (error) {
