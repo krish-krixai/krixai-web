@@ -66,7 +66,7 @@ export function CodeSnippet() {
                 <div className="bg-[rgba(139,92,246,0.08)] -ml-[24px] pl-[24px] pr-[100px] py-[2px] border-l-[2px] border-[#8B5CF6] block whitespace-pre">
                   {"    "}base_url<span className="text-[#8B5CF6]">=</span><span className="text-[#34D399]">"https://api.krixaisecurity.com/v1"</span>,     <span className="text-[#666666]"># &larr; route through Krixai</span>
                   <br />
-                  {"    "}default_headers<span className="text-[#8B5CF6]">=</span>{"{"}<span className="text-[#34D399]">"X-Krixai-Key"</span>: <span className="text-[#34D399]">"kx-..."</span>{"}"} <span className="text-[#666666]"># &larr; add your Krixai key</span>
+                  {"    "}default_headers<span className="text-[#8B5CF6]">=</span>{"{"}<span className="text-[#34D399]">"X-Krixai-API-Key"</span>: <span className="text-[#34D399]">"kx-..."</span>{"}"} <span className="text-[#666666]"># &larr; add your Krixai key</span>
                 </div>
                 )
                 <br />
@@ -77,7 +77,7 @@ export function CodeSnippet() {
                 <br />
                 {"    "}model<span className="text-[#8B5CF6]">=</span><span className="text-[#34D399]">"gpt-4o"</span>,
                 <br />
-                {"    "}messages<span className="text-[#8B5CF6]">=</span>[{"{"}<span className="text-[#34D399]">"role"</span>: <span className="text-[#34D399]">"user"</span>, <span className="text-[#34D399]">"content"</span>: user_input{"}"}]
+                {"    "}messages<span className="text-[#8B5CF6]">=</span>[{"{"}<span className="text-[#34D399]">"role"</span>: <span className="text-[#34D399]">"user"</span>, <span className="text-[#34D399]">"content"</span>: <span className="text-[#34D399]">"Hello, Krixai!"</span>{"}"}]
                 <br />
                 )
               </code>
