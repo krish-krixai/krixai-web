@@ -29,8 +29,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const key_id = process.env.RAZORPAY_KEY_ID;
-    const key_secret = process.env.RAZORPAY_KEY_SECRET;
+    const key_id = process.env.RAZORPAY_LIVE_KEY_ID || process.env.RAZORPAY_KEY_ID || process.env.RAZORPAY_TEST_KEY_ID;
+    const key_secret = process.env.RAZORPAY_LIVE_KEY_SECRET || process.env.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_TEST_KEY_SECRET;
 
     if (!key_id || !key_secret) {
       return NextResponse.json({ error: "Payment provider not configured" }, { status: 500 });

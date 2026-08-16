@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing Razorpay payment parameters" }, { status: 400 });
     }
 
-    const secret = process.env.RAZORPAY_KEY_SECRET;
+    const secret = process.env.RAZORPAY_LIVE_KEY_SECRET || process.env.RAZORPAY_KEY_SECRET || process.env.RAZORPAY_TEST_KEY_SECRET;
     if (!secret) {
       return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
     }
