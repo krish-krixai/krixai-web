@@ -7,7 +7,9 @@ import { Demo } from "@/components/landing/demo";
 import { BottomCta } from "@/components/landing/bottom-cta";
 
 export const metadata: Metadata = {
-  title: "Krixai — AI Security in 2 Lines of Code",
+  title: {
+    absolute: "Krixai — AI Security in 2 Lines of Code"
+  },
   description: "Secure every AI request in milliseconds. Detect prompt injection, jailbreaks, and PII leakage before they reach your LLM. Prevent adversarial attacks on your generative AI applications.",
   alternates: {
     canonical: "/"
