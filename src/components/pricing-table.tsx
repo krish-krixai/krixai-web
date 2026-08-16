@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Check, ArrowRight, Loader2 } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -51,7 +51,7 @@ const PRICING_PLANS = [
     ],
     cta: "Upgrade to Pro →",
     ctaLink: "/auth/sign-up?plan=pro",
-    ctaAction: "signup",
+    ctaAction: "checkout",
     highlighted: true,
   }
 ];
@@ -65,6 +65,37 @@ export function PricingTable({ isCheckoutEnabled = false, isTestMode = false }: 
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<typeof PRICING_PLANS[0] | null>(null);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [authWorkspaceId, setAuthWorkspaceId] = useState<string | null>(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserAndWorkspace = async () => {
+      try {
+        const { createClient } = await import("@/utils/supabase/client");
+        const supabase = createClient();
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user) {
+          const { data: membership } = await supabase
+            .from('workspace_members')
+            .select('workspace_id')
+            .eq('user_id', session.user.id)
+            .limit(1)
+            .single();
+            
+          if (membership) {
+            setAuthWorkspaceId(membership.workspace_id);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch user workspace", err);
+      } finally {
+        setIsAuthLoading(false);
+      }
+    };
+    
+    fetchUserAndWorkspace();
+  }, []);
 
   const loadRazorpay = () => {
     return new Promise((resolve) => {
@@ -78,13 +109,19 @@ export function PricingTable({ isCheckoutEnabled = false, isTestMode = false }: 
 
   const handleCheckout = (plan: typeof PRICING_PLANS[0]) => {
     if (plan.ctaAction === "checkout") {
-      setSelectedPlan(plan);
-      setIsCheckoutOpen(true);
+      if (isAuthLoading) return; // Prevent clicks while checking auth state
+      
+      if (authWorkspaceId) {
+        setSelectedPlan(plan);
+        setIsCheckoutOpen(true);
+      } else {
+        window.location.href = plan.ctaLink;
+      }
     }
   };
 
   const handlePaymentSubmit = async (details: BillingDetails) => {
-    if (!selectedPlan) return;
+    if (!selectedPlan || !authWorkspaceId) return;
     
     setLoadingPlan(selectedPlan.name);
     
@@ -102,7 +139,9 @@ export function PricingTable({ isCheckoutEnabled = false, isTestMode = false }: 
         body: JSON.stringify({
           currency: "INR",
           plan_name: selectedPlan.name,
-          billing_details: details
+          billing_details: details,
+          workspace_id: authWorkspaceId,
+          amount: selectedPlan.amountInr // ensure amount is passed for razorpay to use correctly
         })
       });
 
@@ -138,6 +177,7 @@ export function PricingTable({ isCheckoutEnabled = false, isTestMode = false }: 
             
             if (verifyRes.ok && verifyData.success) {
               alert("Payment successful! Your subscription is active.");
+              window.location.href = "/dashboard/billing";
             } else {
               alert("Payment verification failed. Please contact support.");
             }
@@ -169,7 +209,7 @@ export function PricingTable({ isCheckoutEnabled = false, isTestMode = false }: 
   };
 
   const renderCTA = (plan: typeof PRICING_PLANS[0]) => {
-    const isLoading = loadingPlan === plan.name;
+    const isLoading = loadingPlan === plan.name || (plan.ctaAction === "checkout" && isAuthLoading);
     const baseClasses = "w-full min-h-[44px] rounded-md text-sm font-semibold transition-all duration-300 flex items-center justify-center tracking-wide group";
     
     let styleClasses = "";
@@ -184,7 +224,7 @@ export function PricingTable({ isCheckoutEnabled = false, isTestMode = false }: 
         <button 
           onClick={() => handleCheckout(plan)}
           disabled={!isCheckoutEnabled || isLoading}
-          className={cn(baseClasses, styleClasses, !isCheckoutEnabled && "opacity-50 cursor-not-allowed")}
+          className={cn(baseClasses, styleClasses, (!isCheckoutEnabled || isLoading) && "opacity-50 cursor-not-allowed")}
         >
           {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : plan.cta}
         </button>
