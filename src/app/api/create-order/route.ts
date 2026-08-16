@@ -39,9 +39,8 @@ export async function POST(req: NextRequest) {
     const razorpay = new Razorpay({ key_id, key_secret });
 
     // Create order with Razorpay
-    // Assume amount is already passed appropriately or mapped
     const options = {
-      amount: Math.round(amount * 100), // amount in smallest currency unit
+      amount: Math.round(amount), // amount is already in smallest currency unit
       currency: currency || "USD",
       receipt: `rcpt_${workspace_id.substring(0, 8)}`,
     };

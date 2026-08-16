@@ -120,7 +120,7 @@ export function PricingTable({ isCheckoutEnabled = false, isTestMode = false }: 
     }
   };
 
-  const handlePaymentSubmit = async (details: BillingDetails) => {
+  const handlePaymentSubmit = async (details: BillingDetails, totalAmountPaise: number) => {
     if (!selectedPlan || !authWorkspaceId) return;
     
     setLoadingPlan(selectedPlan.name);
@@ -141,7 +141,7 @@ export function PricingTable({ isCheckoutEnabled = false, isTestMode = false }: 
           plan_name: selectedPlan.name,
           billing_details: details,
           workspace_id: authWorkspaceId,
-          amount: selectedPlan.amountInr // ensure amount is passed for razorpay to use correctly
+          amount: totalAmountPaise
         })
       });
 

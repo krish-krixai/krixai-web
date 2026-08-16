@@ -48,7 +48,7 @@ interface CheckoutModalProps {
   basePrice: number;
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (details: BillingDetails) => Promise<void>;
+  onSubmit: (details: BillingDetails, totalAmountPaise: number) => Promise<void>;
   loading: boolean;
 }
 
@@ -95,7 +95,7 @@ export function CheckoutModal({ planName, basePrice, isOpen, onClose, onSubmit, 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isIndia) return; // Prevent submission for non-India
-    onSubmit(details);
+    onSubmit(details, totalAmount);
   };
 
   const formatINR = (paise: number) => {
