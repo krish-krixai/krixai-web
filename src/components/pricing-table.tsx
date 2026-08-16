@@ -51,7 +51,7 @@ const PRICING_PLANS = [
     ],
     cta: "Upgrade to Pro →",
     ctaLink: "/auth/sign-up?plan=pro",
-    ctaAction: "checkout",
+    ctaAction: "signup",
     highlighted: true,
   }
 ];
