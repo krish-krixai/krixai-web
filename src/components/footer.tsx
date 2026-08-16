@@ -19,7 +19,6 @@ export function Footer() {
         <div className="flex-1 flex flex-wrap items-center justify-center gap-x-[24px] gap-y-[12px]">
           <Link href="https://docs.krixaisecurity.com" className="text-[#71717A] text-[14px] hover:text-[#FFFFFF] transition-colors">Docs</Link>
           <Link href="/pricing" className="text-[#71717A] text-[14px] hover:text-[#FFFFFF] transition-colors">Pricing</Link>
-          <Link href="/blog" className="text-[#71717A] text-[14px] hover:text-[#FFFFFF] transition-colors">Blog</Link>
           <Link href="/terms" className="text-[#71717A] text-[14px] hover:text-[#FFFFFF] transition-colors">Terms</Link>
           <Link href="/privacy" className="text-[#71717A] text-[14px] hover:text-[#FFFFFF] transition-colors">Privacy</Link>
           <a href="mailto:support@krixaisecurity.com" className="text-[#71717A] text-[14px] hover:text-[#FFFFFF] transition-colors">support@krixaisecurity.com</a>

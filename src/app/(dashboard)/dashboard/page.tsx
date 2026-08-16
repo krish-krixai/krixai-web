@@ -163,10 +163,7 @@ export default function DashboardOverview() {
           </div>
           <div className="flex justify-end gap-3 mt-4 text-[11px]">
             <span className="flex items-center gap-1.5 text-neutral-600 bg-white/5 px-2 py-1 rounded-sm border border-white/5 cursor-not-allowed">
-              <Lock className="w-3 h-3" /> [30 days] Starter
-            </span>
-            <span className="flex items-center gap-1.5 text-neutral-600 bg-white/5 px-2 py-1 rounded-sm border border-white/5 cursor-not-allowed">
-              <Lock className="w-3 h-3" /> [90 days] Pro
+              <Lock className="w-3 h-3" /> [30 days] Pro
             </span>
           </div>
         </div>

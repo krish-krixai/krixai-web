@@ -3,7 +3,7 @@ import { Mail, Shield, Briefcase } from "lucide-react";
 import { ContactForm } from "@/components/contact-form";
 
 export const metadata: Metadata = { 
-  title: "Contact Sales - Krixai",
+  title: "Contact Sales",
   description: "Get in touch with the Krixai team to discuss enterprise AI security solutions, schedule a demo, or get support.",
   alternates: { canonical: "/contact" },
   openGraph: { url: "/contact" }

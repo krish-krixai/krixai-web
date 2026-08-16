@@ -84,7 +84,7 @@ export function Navbar() {
                   href="/auth/sign-up" 
                   className="text-[14px] font-semibold bg-[#FFFFFF] text-[#000000] px-[20px] py-[8px] rounded-[10px] hover:brightness-110 transition-all shadow-[0_0_0_1px_rgba(255,255,255,0.05)] hover:shadow-[0_0_0_1px_rgba(255,255,255,0.05)]"
                 >
-                  Get API Key
+                  Get API Key →
                 </Link>
               </>
             )}
@@ -149,7 +149,7 @@ export function Navbar() {
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="w-full text-center text-[16px] font-semibold bg-[#FFFFFF] text-[#000000] py-[14px] rounded-[10px] hover:brightness-110 transition-all shadow-[0_0_0_1px_rgba(255,255,255,0.05)]"
                   >
-                    Get API Key
+                    Get API Key →
                   </Link>
                 </>
               )}

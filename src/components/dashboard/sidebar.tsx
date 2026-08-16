@@ -55,11 +55,8 @@ export function Sidebar({ user }: { user?: { full_name: string; email: string } 
   const mainNav = [
     { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
     { name: "Detection Logs", href: "/dashboard/logs", icon: Shield },
-    { name: "Security Policies", href: "/dashboard/policies", icon: ShieldAlert },
     { name: "API Keys", href: "/dashboard/keys", icon: Key },
     { name: "Settings", href: "/dashboard/settings", icon: Settings },
-    { name: "Usage & Billing", href: "/dashboard/usage", icon: BarChart3 },
-    { name: "Team", href: "/dashboard/team", icon: Users, badge: "PRO" },
   ];
 
   return (
