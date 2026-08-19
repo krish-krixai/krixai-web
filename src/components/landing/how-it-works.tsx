@@ -6,8 +6,8 @@ import { motion } from "framer-motion";
 const steps = [
   {
     num: "1",
-    title: "Point Your SDK to Krixai",
-    description: "Change your base_url to api.krixaisecurity.com. One line. Works with any OpenAI-compatible SDK."
+    title: "Point Your Native SDK to Krixai",
+    description: "Change your base_url to api.krixaisecurity.com. Works natively with OpenAI, Anthropic, and Gemini SDKs."
   },
   {
     num: "2",

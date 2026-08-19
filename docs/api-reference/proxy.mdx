@@ -1,57 +1,61 @@
 ---
-title: 'Proxy Mode API'
-description: 'Drop-in proxy for your LLM provider'
+title: 'Universal Proxy API'
+description: 'Drop-in proxy for any LLM provider'
 ---
 
-Use Krixai as a drop-in proxy for your LLM provider. Same request format as OpenAI — just change the base URL.
+Use Krixai as a drop-in universal proxy for your LLM provider. Krixai intelligently infers your provider based on your API key format, extracts the payload, scans it, and forwards it to the correct native endpoint.
 
 ```http
-POST https://api.krixaisecurity.com/v1/chat/completions
+POST https://api.krixaisecurity.com/{path}
 ```
+
+The `{path}` should exactly match your provider's native path (e.g. `v1/chat/completions` for OpenAI or `v1/messages` for Anthropic). Your native SDK will handle this automatically when you change its `base_url`.
 
 ### Request Headers
 
 | Header | Required | Description |
 |---|---|---|
-| `Authorization` | Yes | Your LLM provider API key: `Bearer sk-...` |
+| `Authorization` / `x-api-key` / `x-goog-api-key` | Yes | Your LLM provider API key (format determines routing) |
 | `X-Krixai-API-Key` | Yes | Your Krixai API key: `kx-live-...` |
 | `X-Krixai-Mode` | No | `shadow`, `advisory`, or `blocking` (default from dashboard settings) |
 | `X-Krixai-Sensitivity` | No | `low`, `medium`, `high`, or `paranoid` (default: `medium`) |
 | `Content-Type` | Yes | `application/json` |
 
+### Supported Providers & Inference
+Krixai determines where to forward your request based on the API key provided in the auth headers:
+- `sk-ant-...` routes to **Anthropic** (`https://api.anthropic.com`)
+- `AIza...` or `AQ.` routes to **Google Gemini** (`https://generativelanguage.googleapis.com`)
+- `gsk_...` routes to **Groq** (`https://api.groq.com/openai`)
+- Everything else routes to **OpenAI** (`https://api.openai.com`)
+
 ### Request Body
 
-Identical to OpenAI's chat completions API. Krixai passes it through after scanning.
+The request body should be identical to your provider's native format. Krixai recursively searches the JSON payload for text to scan.
 
 ### Response (Allowed)
 
-Identical to OpenAI's response, with added headers:
+Identical to your provider's native response, with added headers:
 
 ```http
 X-Krixai-Request-Id: kx-req-abc123
 X-Krixai-Scan-Time-Ms: 14
-X-Krixai-Input-Status: pass
-X-Krixai-Output-Status: pass
+X-Krixai-Security: SAFE
 ```
 
 ### Response (Blocked)
 
-If you are using `blocking` mode and a threat is detected, Krixai returns a `403 Forbidden` with a JSON payload detailing the detection.
+If you are using `blocking` mode and a threat is detected, Krixai returns a `403 Forbidden` (or `400 Bad Request`) with a JSON payload detailing the detection.
 
 ```json
 {
-  "error": {
-    "type": "request_blocked",
-    "code": "prompt_injection_detected",
-    "message": "Krixai blocked this request.",
-    "detection": {
-      "category": "prompt_injection",
-      "sub_type": "instruction_override",
-      "confidence": 0.987,
-      "scan_time_ms": 12,
-      "request_id": "kx-req-abc123",
-      "policy": "auto"
+  "error": "Krixai Security Block",
+  "details": [
+    {
+      "type": "Prompt Injection",
+      "severity": "High",
+      "description": "Instruction override detected",
+      "confidence": 0.987
     }
-  }
+  ]
 }
 ```

@@ -12,9 +12,11 @@ Your key looks like: `kx-live-xxxxxxxxxxxx`
 
 ### Step 2: Route Traffic Through Krixai
 
+Krixai acts as a universal reverse proxy. It intercepts requests from **any native SDK**, scans them for prompt injections, and seamlessly forwards them to your provider.
+
 <CodeGroup>
 
-```python Python (OpenAI SDK)
+```python Python (OpenAI)
 import openai
 
 client = openai.OpenAI(
@@ -31,7 +33,45 @@ response = client.chat.completions.create(
 print(response.choices[0].message.content)
 ```
 
-```javascript Node.js (OpenAI SDK)
+```python Python (Google GenAI)
+from google import genai
+from google.genai import types
+
+client = genai.Client(
+    api_key="AIza-your-gemini-key",
+    http_options=types.HttpOptions(
+        base_url="https://api.krixaisecurity.com",
+        headers={"x-krixai-api-key": "kx-live-your-krixai-key"}
+    )
+)
+
+response = client.models.generate_content(
+    model="gemini-3.7-flash",
+    contents="Summarize this document..."
+)
+
+print(response.text)
+```
+
+```python Python (Anthropic)
+from anthropic import Anthropic
+
+client = Anthropic(
+    api_key="sk-ant-your-anthropic-key",
+    base_url="https://api.krixaisecurity.com",
+    default_headers={"x-krixai-api-key": "kx-live-your-krixai-key"}
+)
+
+message = client.messages.create(
+    max_tokens=1024,
+    messages=[{"role": "user", "content": "Summarize this document..."}],
+    model="claude-3-opus-20240229",
+)
+
+print(message.content)
+```
+
+```javascript Node.js (OpenAI)
 import OpenAI from 'openai';
 
 const client = new OpenAI({

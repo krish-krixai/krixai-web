@@ -1,9 +1,49 @@
 ---
 title: 'SDKs & Integrations'
-description: 'Using Krixai with LangChain, LlamaIndex, and FastAPI'
+description: 'Using Krixai with Native SDKs, LangChain, and LlamaIndex'
 ---
 
-Because Krixai acts as a reverse proxy, it works natively with almost any LLM framework by simply changing the `base_url`.
+Because Krixai acts as a universal reverse proxy, it works natively with almost any LLM framework or SDK by simply changing the `base_url` or `http_options`.
+
+### Native SDKs
+
+Krixai supports the native SDKs for OpenAI, Google GenAI, and Anthropic. You do not need to use OpenAI compatibility wrappers.
+
+<CodeGroup>
+
+```python Google GenAI
+from google import genai
+from google.genai import types
+
+client = genai.Client(
+    api_key="AIza...",
+    http_options=types.HttpOptions(
+        base_url="https://api.krixaisecurity.com",
+        headers={"x-krixai-api-key": "kx-live-..."}
+    )
+)
+```
+
+```python Anthropic
+from anthropic import Anthropic
+
+client = Anthropic(
+    api_key="sk-ant-...",
+    base_url="https://api.krixaisecurity.com",
+    default_headers={"x-krixai-api-key": "kx-live-..."}
+)
+```
+
+```python OpenAI
+import openai
+
+client = openai.OpenAI(
+    api_key="sk-...",
+    base_url="https://api.krixaisecurity.com/v1",
+    default_headers={"X-Krixai-API-Key": "kx-live-..."}
+)
+```
+</CodeGroup>
 
 ### LangChain Integration
 
