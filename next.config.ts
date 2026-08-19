@@ -24,6 +24,19 @@ const nextConfig: NextConfig = {
         ]
       }
     ];
+  },
+
+  async redirects() {
+    return [
+      { source: '/company', destination: '/', permanent: true },
+      { source: '/security', destination: '/', permanent: true },
+      { source: '/ai-security', destination: '/', permanent: true },
+      { source: '/rag-security', destination: '/', permanent: true },
+      { source: '/prompt-injection', destination: '/', permanent: true },
+      { source: '/indirect-prompt-injection', destination: '/', permanent: true },
+      { source: '/product', destination: '/', permanent: true },
+      { source: '/research/:path*', destination: '/', permanent: true },
+    ];
   }
 };
 
