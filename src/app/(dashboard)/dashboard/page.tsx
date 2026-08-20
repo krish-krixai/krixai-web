@@ -1,8 +1,9 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Lock, ArrowRight, ShieldAlert, CheckCircle2, Clock, Activity } from "lucide-react";
+import { ShieldAlert, CheckCircle2, Clock, Activity, Lock, ArrowRight } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
+import { useWorkspace } from "@/components/providers/workspace-provider";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -11,11 +12,14 @@ function cn(...inputs: ClassValue[]) {
 }
 
 export default function DashboardOverview() {
+  const { activeWorkspace } = useWorkspace();
   const [userName, setUserName] = useState("User");
   const [logs, setLogs] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
+    if (!activeWorkspace) return;
+
     const init = async () => {
       const supabase = createClient();
       const { data } = await supabase.auth.getUser();
@@ -25,10 +29,12 @@ export default function DashboardOverview() {
 
       // Fetch real logs to populate the dashboard metrics
       try {
-        const res = await fetch(`/api/logs?page=1&limit=50`);
+        const res = await fetch(`/api/logs?workspace_id=${activeWorkspace.id}&page=1&limit=50`);
         if (res.ok) {
           const logsData = await res.json();
           setLogs(logsData.data || []);
+        } else {
+          console.error("Failed to fetch logs. Status:", res.status);
         }
       } catch(e) {
         console.error("Failed to fetch logs", e);
@@ -37,7 +43,7 @@ export default function DashboardOverview() {
       }
     };
     init();
-  }, []);
+  }, [activeWorkspace]);
 
   const hour = new Date().getHours();
   const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";

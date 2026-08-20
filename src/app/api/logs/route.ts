@@ -29,6 +29,8 @@ export async function GET(request: NextRequest) {
   
   const { data, error, count } = await query;
   
+  console.log("FETCHED LOGS:", data?.length, "error:", error?.message);
+  
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

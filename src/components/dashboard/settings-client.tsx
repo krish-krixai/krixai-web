@@ -46,6 +46,7 @@ export function SettingsClient() {
       
     if (error) {
       console.error(error);
+      alert("Failed to save: " + error.message);
       return;
     }
     

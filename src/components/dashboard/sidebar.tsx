@@ -29,11 +29,13 @@ export function Sidebar({ user }: { user?: { full_name: string; email: string } 
   const pathname = usePathname();
   const { activeWorkspace } = useWorkspace();
   const [subscription, setSubscription] = useState<any>(null);
+  const [usedScans, setUsedScans] = useState<number>(0);
   const supabase = createClient();
 
   useEffect(() => {
     if (activeWorkspace) {
-      const fetchSub = async () => {
+      const fetchData = async () => {
+        // Fetch subscription details
         const { data } = await supabase
           .from('workspace_subscriptions')
           .select('*')
@@ -42,13 +44,23 @@ export function Sidebar({ user }: { user?: { full_name: string; email: string } 
         if (data) {
           setSubscription(data);
         }
+        
+        // Fetch actual log count for usage
+        const { count } = await supabase
+          .from('detection_logs')
+          .select('*', { count: 'exact', head: true })
+          .eq('workspace_id', activeWorkspace.id);
+          
+        if (count !== null) {
+          setUsedScans(count);
+        }
       };
-      fetchSub();
+      fetchData();
     }
   }, [activeWorkspace]);
 
   const monthlyLimit = subscription?.included_scans || 10000;
-  const used = subscription?.scans_used || 0;
+  const used = Math.max(usedScans, subscription?.scans_used || 0);
   const planName = subscription?.plan_id ? subscription.plan_id.replace('_', ' ') : "Free Plan";
   const usagePercentage = Math.min(100, (used / monthlyLimit) * 100);
 
